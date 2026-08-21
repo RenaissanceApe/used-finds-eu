@@ -108,11 +108,46 @@ tells you nothing about whether *our* code works.
 
 ## Keeping it alive
 
-Scraped selectors rot. `scripts/verify_catalog.py` issues exactly one search per
-marketplace and reports which ones came back empty or broken — run it monthly,
-or when a country goes suspiciously quiet. An `EMPTY` result from a generic
-query like "iphone" almost always means the selectors moved, not that Europe ran
-out of iPhones, and the script flags it as such.
+Scraped selectors rot, and sites block. Those need opposite responses, so the
+tooling separates them.
+
+**`scripts/verify_catalog.py`** issues exactly one search per marketplace and
+groups the results by *cause*: working / broken / blocked / needs-credentials /
+manual. Run it monthly, or when a country goes quiet.
+
+**`scripts/probe_site.py <id>`** inspects a single marketplace and reports what
+its response actually contains — whether the configured CSS selector or JSON
+root still resolves, and if not, what the repeated listing-shaped elements or
+the largest arrays-of-objects are. It exists so that fixing a rotted entry is
+reading one command's output and pasting a path into YAML, rather than scrolling
+through minified HTML.
+
+Both engines also diagnose themselves during a normal search. The HTML engine,
+on zero matches, distinguishes an anti-bot page from a genuinely empty result
+from a rotted selector — and in the last case reports candidate selectors with
+a text sample. The JSON engine tries `__NEXT_DATA__`, `window.__NUXT__` /
+`__INITIAL_STATE__`, and `application/json` script tags before giving up, and
+names the largest arrays in the payload when the configured `root` resolves to
+nothing.
+
+### What the first live verification found (2026-08-21)
+
+Run from a GitHub Codespace — an Azure datacenter IP — against 31 marketplaces:
+
+| Outcome | Count | Notes |
+| --- | --- | --- |
+| Working | 10 | willhaben, 2dehands, Bazoš ×2, Kleinanzeigen, Wallapop, Vinted, SS.lv, Marktplaats, Bolha |
+| Blocked | 12 | OLX ×4, Subito, Adverts.ie, Okidoki, Jófogás, Skelbiu, Vendora, Bazaraki, Njuškalo |
+| Broken | 4 | dba.dk, tori.fi (both dropped `__NEXT_DATA__`), CustoJusto (404), MaltaPark (selectors) |
+| Needs credentials | 2 | eBay, Blocket |
+| Manual by design | 3 | leboncoin, Facebook, Luxauto |
+
+**The blocks are the headline, and they are not a code problem.** Every one came
+back `403` in 50–110ms, which is a CDN edge refusing on IP reputation before
+anything inspected the request. OLX's API and Subito's `hades` endpoint work
+normally from residential connections. This is the single strongest argument for
+running the backend on a residential connection rather than a VPS or a cloud
+IDE — see docs/05-hosting.md.
 
 ## Being a good guest
 

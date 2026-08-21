@@ -25,6 +25,94 @@ from .base import BaseEngine, EngineError, NeedsAuth
 _NEXT_DATA_RE = re.compile(
     r'<script[^>]+id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.DOTALL | re.IGNORECASE
 )
+_JSON_SCRIPT_RE = re.compile(
+    r'<script[^>]+type="application/(?:ld\+)?json"[^>]*>(.*?)</script>', re.DOTALL | re.IGNORECASE
+)
+_STATE_ASSIGN_RE = re.compile(
+    r'(?:window\.__NUXT__|window\.__INITIAL_STATE__|window\.__APOLLO_STATE__)\s*=\s*(\{.*?\})\s*;?\s*</script>',
+    re.DOTALL,
+)
+# Next.js App Router streams its payload as JS pushes rather than one JSON blob.
+_FLIGHT_RE = re.compile(r"self\.__next_f\.push\(")
+
+
+def _largest_json(candidates: list[str]) -> Any | None:
+    """Parse every candidate blob, return the biggest one that is a dict."""
+    best = None
+    best_size = 0
+    for blob in candidates:
+        blob = blob.strip()
+        if len(blob) <= best_size:
+            continue
+        try:
+            parsed = json.loads(blob)
+        except (json.JSONDecodeError, ValueError):
+            continue
+        if isinstance(parsed, (dict, list)):
+            best, best_size = parsed, len(blob)
+    return best
+
+
+def extract_embedded_json(html: str) -> tuple[Any | None, str]:
+    """Pull a page's server-rendered state out of its HTML.
+
+    Sites move between these representations without warning — dba.dk and
+    tori.fi both dropped ``__NEXT_DATA__`` between this catalogue being written
+    and being verified — so try each known shape rather than hard-coding one,
+    and report which shape matched so the config can be pinned later.
+    """
+    match = _NEXT_DATA_RE.search(html)
+    if match:
+        try:
+            return json.loads(match.group(1)), "__NEXT_DATA__"
+        except json.JSONDecodeError:
+            pass
+
+    state = _STATE_ASSIGN_RE.search(html)
+    if state:
+        try:
+            return json.loads(state.group(1)), "window state assignment"
+        except json.JSONDecodeError:
+            pass
+
+    scripts = _JSON_SCRIPT_RE.findall(html)
+    if scripts:
+        parsed = _largest_json(scripts)
+        if parsed is not None:
+            return parsed, "application/json script tag"
+
+    if _FLIGHT_RE.search(html):
+        # Recognised but not reassembled: the flight payload is a stream of
+        # partial strings, and guessing at it produces silent wrong answers.
+        return None, "next-app-router-flight"
+    return None, "none"
+
+
+def suggest_roots(payload: Any, limit: int = 4) -> list[str]:
+    """Find the arrays of objects a search result could plausibly live in.
+
+    Same idea as the HTML engine's selector hints: when `root` stops resolving,
+    say where the data actually is instead of just returning nothing.
+    """
+    found: list[tuple[int, str]] = []
+
+    def walk(node: Any, path: str, depth: int) -> None:
+        if depth > 8 or len(found) > 400:
+            return
+        if isinstance(node, list):
+            if node and isinstance(node[0], dict):
+                found.append((len(node), path))
+            if node:
+                walk(node[0], f"{path}[0]", depth + 1)
+        elif isinstance(node, dict):
+            for key, value in node.items():
+                if not isinstance(key, str) or not key.isidentifier():
+                    continue
+                walk(value, f"{path}.{key}" if path else key, depth + 1)
+
+    walk(payload, "", 0)
+    found.sort(key=lambda pair: -pair[0])
+    return [f"{path} ({count} items)" for count, path in found[:limit]]
 
 # Fields we map straight through; anything else in `fields` is handled specially.
 _SIMPLE_FIELDS = (
@@ -58,13 +146,20 @@ class JsonApiEngine(BaseEngine):
         if mode == "next_data":
             response = await self.client.get(url, headers=self.headers(), follow_redirects=True)
             response.raise_for_status()
-            match = _NEXT_DATA_RE.search(response.text)
-            if not match:
+            payload, strategy = extract_embedded_json(response.text)
+            if payload is None:
+                if strategy == "next-app-router-flight":
+                    raise EngineError(
+                        "page moved to the Next.js App Router — its data arrives as a "
+                        "streamed flight payload, not one JSON blob. This site needs a "
+                        "real endpoint (check the network tab for an XHR) or a browser engine."
+                    )
                 raise EngineError(
-                    "No __NEXT_DATA__ blob on the page — the site changed its "
-                    "rendering. Re-check engine_config in marketplaces.yaml."
+                    "no embedded JSON on the page (tried __NEXT_DATA__, window state, "
+                    "and JSON script tags) — the site changed its rendering."
                 )
-            return json.loads(match.group(1))
+            self._strategy = strategy
+            return payload
 
         method = self.config.get("method", "GET").upper()
         if method == "POST":
@@ -130,7 +225,15 @@ class JsonApiEngine(BaseEngine):
         payload = await self._payload(query)
         root = self.config.get("root")
         items = _search(root, payload) if root else payload
-        if items is None:
+        if items is None or (isinstance(items, list) and not items):
+            hints = suggest_roots(payload)
+            if hints:
+                strategy = getattr(self, "_strategy", None)
+                where = f" (extracted via {strategy})" if strategy else ""
+                raise EngineError(
+                    f"root {root!r} resolved to nothing{where}. Largest arrays of "
+                    "objects in the payload: " + " | ".join(hints)
+                )
             return []
         if isinstance(items, dict):
             items = list(items.values())

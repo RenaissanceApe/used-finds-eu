@@ -235,3 +235,120 @@ async def test_blocket_requires_a_bearer_token(catalog, query):
     result = await _run(catalog.by_id["blocket_se"], query, credentials={})
     assert result.status is ResultStatus.NEEDS_AUTH
     assert "bearer" in result.error.lower()
+
+
+# ── self-diagnosis ────────────────────────────────────────────────────────
+# The verify run against live sites showed the expensive failure mode is not a
+# crash but silence: a site redesigns, the selector matches nothing, and the
+# result is indistinguishable from "no listings". These cover the machinery
+# that tells us which it was.
+
+@respx.mock
+async def test_html_engine_suggests_selectors_when_its_own_have_rotted(catalog, fixtures_dir, query):
+    """maltapark returned 200 with 0 listings in the live probe — this is that."""
+    html = (fixtures_dir / "redesigned_site.html").read_text()
+    respx.get(url__startswith="https://www.maltapark.com/search").mock(
+        return_value=httpx.Response(200, text=html)
+    )
+    result = await _run(catalog.by_id["maltapark_mt"], query)
+
+    assert result.status is ResultStatus.ERROR
+    assert "matched nothing" in result.error
+    # The real selector must be in the suggestions, with a sample to confirm it.
+    assert "article.listing-card" in result.error
+    assert "iPhone" in result.error
+
+
+@respx.mock
+async def test_html_engine_still_reports_plain_empty_when_the_page_has_no_rows(catalog, query):
+    respx.get(url__startswith="https://www.maltapark.com/search").mock(
+        return_value=httpx.Response(200, text="<html><body><p>No results found</p></body></html>")
+    )
+    result = await _run(catalog.by_id["maltapark_mt"], query)
+    assert result.status is ResultStatus.EMPTY
+    assert result.error is None
+
+
+@respx.mock
+async def test_block_detection_beats_selector_suggestion(catalog, fixtures_dir, query):
+    """A blocked page can still contain repeated markup; don't send someone
+    chasing selectors when the real problem is the IP."""
+    html = (fixtures_dir / "redesigned_site.html").read_text().replace(
+        "<header", "<p>Just a moment... checking your browser</p><header"
+    )
+    respx.get(url__startswith="https://www.maltapark.com/search").mock(
+        return_value=httpx.Response(200, text=html)
+    )
+    result = await _run(catalog.by_id["maltapark_mt"], query)
+    assert "anti-bot" in result.error
+
+
+@respx.mock
+async def test_json_engine_reports_where_the_data_actually_is(catalog, query):
+    """dba_dk/tori_fi class of failure: page still renders, our root is stale."""
+    payload = {"props": {"pageProps": {"searchResults": {
+        "items": [{"id": i, "heading": f"iPhone {i}"} for i in range(30)]
+    }}}}
+    respx.get(url__startswith="https://www.dba.dk/").mock(
+        return_value=httpx.Response(200, text=(
+            '<html><body><script id="__NEXT_DATA__" type="application/json">'
+            + json.dumps(payload) + "</script></body></html>"
+        ))
+    )
+    result = await _run(catalog.by_id["dba_dk"], query)
+
+    assert result.status is ResultStatus.ERROR
+    assert "resolved to nothing" in result.error
+    # It must name the real path so fixing the YAML is a copy-paste.
+    assert "props.pageProps.searchResults.items (30 items)" in result.error
+    assert "__NEXT_DATA__" in result.error
+
+
+@respx.mock
+async def test_json_engine_reads_nuxt_and_plain_json_script_tags(catalog, query):
+    """Not every server-rendered site is Next.js; don't fail just because of that."""
+    payload = {"data": {"docs": [
+        {"id": 1, "heading": "iPhone 13", "price": {"amount": 430},
+         "canonical_url": "https://www.dba.dk/i/1"},
+    ]}}
+    respx.get(url__startswith="https://www.dba.dk/").mock(
+        return_value=httpx.Response(200, text=(
+            "<html><body><script>window.__NUXT__ = " + json.dumps(payload) + ";</script></body></html>"
+        ))
+    )
+    market = catalog.by_id["dba_dk"].model_copy(deep=True)
+    market.engine_config["root"] = "data.docs"
+    result = await _run(market, query)
+
+    assert result.status is ResultStatus.OK
+    assert result.listings[0].title == "iPhone 13"
+    assert result.listings[0].price == pytest.approx(430.0)
+
+
+@respx.mock
+async def test_json_engine_names_the_app_router_problem_precisely(catalog, query):
+    """A streamed flight payload cannot be guessed at — say so rather than
+    silently returning nothing or inventing a parse."""
+    respx.get(url__startswith="https://www.tori.fi/").mock(
+        return_value=httpx.Response(200, text=(
+            '<html><body><script>self.__next_f.push([1,"a:[\\"$\\",\\"div\\"]"])</script></body></html>'
+        ))
+    )
+    result = await _run(catalog.by_id["tori_fi"], query)
+    assert result.status is ResultStatus.ERROR
+    assert "App Router" in result.error
+    assert "network tab" in result.error
+
+
+def test_suggest_roots_ranks_by_size_and_skips_scalar_arrays():
+    from ufeu.adapters.json_api import suggest_roots
+
+    hints = suggest_roots({
+        "small": [{"a": 1}, {"a": 2}],
+        "big": {"nested": [{"a": i} for i in range(50)]},
+        "scalars": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "empty": [],
+    })
+    assert hints[0].startswith("big.nested (50 items)")
+    assert any(h.startswith("small (2 items)") for h in hints)
+    assert not any("scalars" in h for h in hints)

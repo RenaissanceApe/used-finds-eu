@@ -14,6 +14,8 @@ Check each site's robots.txt and terms before you enable it in anger.
 from __future__ import annotations
 
 import asyncio
+import re
+from collections import Counter
 from typing import Any
 
 from bs4 import BeautifulSoup
@@ -22,6 +24,45 @@ from ..models import Listing, SearchQuery
 from .base import BaseEngine, EngineError
 
 _FIELDS = ("id", "title", "url", "price", "image", "location", "seller", "posted", "description", "condition")
+
+_BLOCK_SIGNS = ("captcha", "are you a robot", "access denied", "datadome",
+                "cf-browser-verification", "just a moment", "unusual traffic")
+_DIGIT = re.compile(r"\d")
+
+
+def _suggest_item_selectors(soup: BeautifulSoup, limit: int = 3) -> list[str]:
+    """Guess what a result row looks like on a page whose selectors have rotted.
+
+    Sites redesign and `engine_config.item` silently stops matching; the failure
+    is indistinguishable from "no results" unless you go and read the HTML. So
+    when nothing matches, look for the shape a listing actually has — an element
+    that repeats, contains a link, and carries a number that could be a price —
+    and hand back the candidates. Fixing the catalogue then means pasting one of
+    these into the YAML instead of hunting through a page by hand.
+    """
+    counts: Counter[str] = Counter()
+    samples: dict[str, str] = {}
+
+    for node in soup.find_all(True):
+        classes = node.get("class") or []
+        if not classes:
+            continue
+        if not node.find("a", href=True):
+            continue
+        text = node.get_text(" ", strip=True)
+        # Too short to be a listing, or so long it is the whole page wrapper.
+        if not (20 <= len(text) <= 600) or not _DIGIT.search(text):
+            continue
+
+        signature = f"{node.name}." + ".".join(sorted(classes)[:3])
+        counts[signature] += 1
+        samples.setdefault(signature, text[:60])
+
+    return [
+        f"{selector}  ({count}\u00d7, e.g. {samples[selector]!r})"
+        for selector, count in counts.most_common(limit)
+        if count >= 4
+    ]
 
 
 def _extract(node, spec: dict[str, Any] | None) -> str | None:
@@ -74,11 +115,19 @@ class HtmlEngine(BaseEngine):
             raise EngineError("engine_config.item selector missing")
         nodes = soup.select(item_selector)
         if not nodes:
-            # Distinguish "no results" from "our selectors rotted", because the
-            # fix is completely different and silence here wastes hours.
+            # Three very different situations look identical here — blocked,
+            # genuinely no results, or our selector rotted — and each has a
+            # different fix, so say which one it is.
             body = response.text.lower()
-            if any(word in body for word in ("captcha", "are you a robot", "access denied", "datadome")):
+            if any(word in body for word in _BLOCK_SIGNS):
                 raise EngineError("blocked by anti-bot page")
+
+            suggestions = _suggest_item_selectors(soup)
+            if suggestions:
+                raise EngineError(
+                    f"item selector {item_selector!r} matched nothing, but the page "
+                    f"has repeated listing-shaped elements. Try: " + " | ".join(suggestions)
+                )
             return []
 
         field_specs: dict[str, dict[str, Any]] = self.config.get("fields", {})
