@@ -279,4 +279,12 @@ class JsonApiEngine(BaseEngine):
             )
             if listing:
                 listings.append(listing)
+
+        if items and not listings:
+            sample = next((i for i in items if isinstance(i, dict)), None)
+            keys = sorted(sample)[:20] if sample else []
+            raise EngineError(
+                f"root {root!r} gave {len(items)} items but none produced a title and a "
+                f"url — the field mapping is wrong. Keys on a sample item: {keys}"
+            )
         return listings

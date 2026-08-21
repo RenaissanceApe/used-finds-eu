@@ -45,15 +45,31 @@ def unavailable_reason() -> str:
     return _IMPORT_ERROR or "not installed"
 
 
+# curl has already applied these by the time we see the body; passing them on
+# would make httpx try to decode an already-decoded payload a second time.
+_CONSUMED_HEADERS = {"content-encoding", "content-length", "transfer-encoding"}
+
+
 def _to_httpx(response: Any, method: str, url: str) -> httpx.Response:
     """Re-wrap a curl_cffi response as an httpx one.
 
     Keeps a single response and exception model across both transports, so
     engines never branch on which transport served them.
+
+    The header filtering is load-bearing rather than tidiness: curl transparently
+    decompresses, so ``response.content`` is plain bytes while the headers still
+    advertise ``Content-Encoding: gzip``. Forwarding that pair makes httpx
+    inflate the body again and raise DecodingError on every gzipped site — which
+    is exactly how this first shipped.
     """
+    headers = {
+        key: value
+        for key, value in dict(response.headers).items()
+        if key.lower() not in _CONSUMED_HEADERS
+    }
     return httpx.Response(
         status_code=response.status_code,
-        headers=dict(response.headers),
+        headers=headers,
         content=response.content,
         request=httpx.Request(method, url),
     )

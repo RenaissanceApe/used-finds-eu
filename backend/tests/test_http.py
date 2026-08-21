@@ -115,3 +115,35 @@ def test_availability_reports_a_reason_when_absent():
         assert ufeu_http.unavailable_reason() == "not installed"
     else:
         assert ufeu_http.unavailable_reason()
+
+
+@pytest.mark.parametrize("encoding", ["gzip", "br", "zstd", "deflate"])
+def test_already_decoded_bodies_are_not_decoded_twice(encoding):
+    """curl decompresses transparently, so the body is plain while the headers
+    still claim an encoding. Forwarding both made httpx inflate it again and
+    raise DecodingError on every gzipped site — eight of them, in practice."""
+    response = ufeu_http._to_httpx(
+        _FakeCurlResponse(
+            200,
+            b'{"data": [{"id": 1}]}',
+            headers={"content-type": "application/json", "content-encoding": encoding,
+                     "content-length": "999"},
+        ),
+        "GET",
+        "https://www.olx.pt/api/v1/offers/",
+    )
+    # The bug surfaced on read, not on construction.
+    assert response.json() == {"data": [{"id": 1}]}
+    assert "content-encoding" not in response.headers
+    # httpx recomputes content-length from the real body; the stale value curl
+    # reported for the *compressed* payload must not survive.
+    assert response.headers["content-length"] == "21"
+    assert response.headers["content-type"] == "application/json"
+
+
+def test_meaningful_headers_survive_the_conversion():
+    response = ufeu_http._to_httpx(
+        _FakeCurlResponse(200, b"ok", headers={"content-type": "text/html", "set-cookie": "a=1"}),
+        "GET", "https://example.com",
+    )
+    assert response.headers["set-cookie"] == "a=1"

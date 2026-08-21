@@ -316,8 +316,14 @@ async def test_json_engine_reads_nuxt_and_plain_json_script_tags(catalog, query)
             "<html><body><script>window.__NUXT__ = " + json.dumps(payload) + ";</script></body></html>"
         ))
     )
+    # Override root and fields: this covers the extraction strategy, not any
+    # one site's mapping, so it must not break when a catalogue entry changes.
     market = catalog.by_id["dba_dk"].model_copy(deep=True)
     market.engine_config["root"] = "data.docs"
+    market.engine_config["fields"] = {
+        "id": "id", "title": "heading", "url": "canonical_url", "price": "price.amount",
+    }
+    market.engine_config.pop("currency_field", None)
     result = await _run(market, query)
 
     assert result.status is ResultStatus.OK

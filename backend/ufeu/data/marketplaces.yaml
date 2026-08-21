@@ -446,8 +446,16 @@ marketplaces:
     engine_config:
       mode: next_data
       search_url: "https://www.dba.dk/soeg/?soeg={q}"
-      root: "props.pageProps.searchResult.docs"
-      fields: {id: id, title: heading, url: canonical_url, price: "price.amount", image: "image.url", location: location}
+      # Both sites dropped __NEXT_DATA__; what they now publish is schema.org
+      # JSON-LD, which is a better target anyway — it is a standard the SEO team
+      # has an incentive to keep working.
+      root: mainEntity.itemListElement
+      fields:
+        title: "item.name"
+        url: "item.url"
+        price: "item.offers.price"
+        image: "item.image"
+      currency_field: "item.offers.priceCurrency"
       currency: DKK
     account: {required_for_search: false, kind: session, signup_url: "https://www.dba.dk/bruger/opret", captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "DAO/GLS domestic. Prepaid label or forwarder for PT."}
@@ -511,8 +519,16 @@ marketplaces:
     engine_config:
       mode: next_data
       search_url: "https://www.tori.fi/recommerce/forsale/search?q={q}"
-      root: "props.pageProps.initialData.docs"
-      fields: {id: id, title: heading, url: canonical_url, price: "price.amount", image: "image.url", location: location}
+      # Both sites dropped __NEXT_DATA__; what they now publish is schema.org
+      # JSON-LD, which is a better target anyway — it is a standard the SEO team
+      # has an incentive to keep working.
+      root: mainEntity.itemListElement
+      fields:
+        title: "item.name"
+        url: "item.url"
+        price: "item.offers.price"
+        image: "item.image"
+      currency_field: "item.offers.priceCurrency"
     account: {required_for_search: false, kind: session, signup_url: "https://www.tori.fi/account/register", captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "Posti/Matkahuolto domestic. Nordic → PT is pricey; prefer Vinted for FI fashion."}
 
@@ -599,21 +615,19 @@ marketplaces:
     scope: national
     site: https://www.vendora.gr
     focus: [general, fashion, electronics]
-    engine: html
+    engine: manual
     default_enabled: true
     confidence: medium
     why: >-
-      Greece's largest peer-to-peer marketplace for general goods. The Greek market
-      is fragmented (car.gr owns vehicles, Skroutz owns retail), so confidence is
-      medium and Vinted GR is worth running alongside.
+      Greece's largest peer-to-peer marketplace for general goods. Moved to
+      `manual` on evidence, not caution: probing returns 157KB of HTML in which
+      the search term never appears, and the only repeated elements are
+      `card-product shimmer-loading` skeletons. The results arrive by XHR after
+      load, so no selector can ever match them. Recovering it needs either that
+      endpoint or a browser engine — until then the deep link is the honest
+      offering, and Vinted GR covers Greece meanwhile.
     engine_config:
       search_url: "https://www.vendora.gr/search?q={q}"
-      item: "div.product-card"
-      fields:
-        title: {sel: ".product-card__title", attr: text}
-        url: {sel: "a", attr: href}
-        price: {sel: ".product-card__price", attr: text}
-        image: {sel: "img", attr: src}
     account: {required_for_search: false, kind: session, automatable: false}
     shipping: {native_to_pt: false, notes: "ELTA/ACS domestic. GR → PT is a long, costly corridor."}
 
@@ -630,7 +644,10 @@ marketplaces:
     why: Hungary's leading general classifieds site (Schibsted/Adevinta lineage); Vatera covers auctions.
     engine_config:
       search_url: "https://www.jofogas.hu/magyarorszag?q={q}"
-      item: "div.list-item"
+      # A MUI app, but server-rendered: the term is in the HTML. MuiCard-root is
+      # part of MUI's public class contract, unlike the MuiGrid breakpoint
+      # classes beside it, which change with any layout tweak.
+      item: "div.MuiCard-root"
       fields:
         title: {sel: ".subject a", attr: text}
         url: {sel: ".subject a", attr: href}
@@ -808,6 +825,7 @@ marketplaces:
     confidence: high
     why: Malta's single national classifieds site; essentially the entire local market.
     engine_config:
+      impersonate: chrome124        # probe reported a Cloudflare challenge page
       search_url: "https://www.maltapark.com/search?q={q}"
       item: "div.item-listing, div.product-item"
       fields:
@@ -934,19 +952,25 @@ marketplaces:
     scope: national
     site: https://www.custojusto.pt
     focus: [general, vehicles]
-    engine: html
+    engine: json_api
     default_enabled: true
     confidence: high
     why: Portugal's Schibsted-lineage classifieds site; smaller than OLX but still worth the extra call at home.
     engine_config:
-      search_url: "https://www.custojusto.pt/todo-portugal?q={q}"
-      item: "div.list-item, article"
+      # /todo-portugal 404s; /portugal?q= is the live search and renders 40
+      # results into __NEXT_DATA__, so read the payload rather than the markup —
+      # the visible classes are Tailwind utilities and change on any restyle.
+      mode: next_data
+      search_url: "https://www.custojusto.pt/portugal?q={q}"
+      root: props.pageProps.listItems
       fields:
-        title: {sel: "a.item-link, h2 a", attr: text}
-        url: {sel: "a", attr: href}
-        price: {sel: ".item-price, .price", attr: text}
-        image: {sel: "img", attr: src}
-        location: {sel: ".item-location", attr: text}
+        id: id
+        title: subject
+        url: url
+        price: price
+        image: image
+        location: location
+        posted: date
     account: {required_for_search: false, kind: session, automatable: false}
     shipping: {native_to_pt: true, notes: Domestic.}
 

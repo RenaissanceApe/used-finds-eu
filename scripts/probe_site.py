@@ -46,6 +46,10 @@ async def main() -> int:
     parser.add_argument("-q", "--query", default="iphone")
     parser.add_argument("--save", help="write the raw response body to this path")
     parser.add_argument(
+        "--item",
+        help="override the CSS item selector to try a candidate without editing the catalogue",
+    )
+    parser.add_argument(
         "--url",
         help="override the search URL (use %%QUERY%% for the term) to try a candidate path "
              "without editing the catalogue first",
@@ -109,16 +113,15 @@ async def main() -> int:
         print(f"\n  JSON response. configured root: {root!r}")
         for hint in suggest_roots(payload, limit=6):
             print(f"    candidate root: {hint}")
-        first = _first_object(payload)
-        if first:
-            print(f"    keys on a sample item: {sorted(first)[:18]}")
+            for line in _preview_root(payload, hint.split(" (")[0]):
+                print(line)
         return 0
 
     # ── HTML responses ────────────────────────────────────────────────────
     describe_page_shape(body, args.query)
 
     soup = BeautifulSoup(body, "lxml")
-    item_selector = market.engine_config.get("item")
+    item_selector = args.item or market.engine_config.get("item")
     if item_selector:
         matched = soup.select(item_selector)
         print(f"\n  configured item selector {item_selector!r} → {len(matched)} matches")
@@ -127,6 +130,9 @@ async def main() -> int:
                 value = matched[0].select_one(spec["sel"]) if spec.get("sel") else matched[0]
                 got = (value.get_text(" ", strip=True)[:60] if value else None)
                 print(f"    {field:<12} {'✓' if value else '✗'}  {got!r}")
+            print("\n  anatomy of the first match (candidate field selectors):")
+            for line in describe_item(matched[0]):
+                print(f"    {line}")
         else:
             print("\n  repeated listing-shaped elements (link + price-like text):")
             hints = _suggest_item_selectors(soup, limit=6)
@@ -143,8 +149,10 @@ async def main() -> int:
     payload, strategy = extract_embedded_json(body)
     print(f"\n  embedded JSON: {strategy}")
     if payload is not None:
-        for hint in suggest_roots(payload, limit=6):
+        for hint in suggest_roots(payload, limit=4):
             print(f"    candidate root: {hint}")
+            for line in _preview_root(payload, hint.split(" (")[0]):
+                print(line)
     return 0
 
 
@@ -191,6 +199,47 @@ def repeated_elements(soup, limit: int = 8) -> list[str]:
             continue
         counts[f"{node.name}." + ".".join(sorted(classes)[:3])] += 1
     return [f"{sig}  ({n}\u00d7)" for sig, n in counts.most_common(limit) if n >= 3]
+
+
+def describe_item(node, limit: int = 14) -> list[str]:
+    """List a matched listing's inner elements and their text.
+
+    With this, writing the `fields` block is reading a list rather than guessing:
+    each line is a selector that exists inside the row, and what it contains.
+    """
+    lines: list[str] = []
+    for child in node.find_all(True):
+        classes = child.get("class") or []
+        text = child.get_text(" ", strip=True)
+        href = child.get("href")
+        if not text and not href:
+            continue
+        selector = f"{child.name}" + ("." + ".".join(classes[:2]) if classes else "")
+        detail = f"href={href}" if href and not text else repr(text[:52])
+        lines.append(f"{selector:<44} {detail}")
+        if len(lines) >= limit:
+            break
+    return lines
+
+
+def _preview_root(payload, path: str) -> list[str]:
+    """Keys and a sample of the first item under a candidate root."""
+    import jmespath
+
+    try:
+        items = jmespath.search(path, payload)
+    except Exception:
+        return []
+    if not isinstance(items, list) or not items or not isinstance(items[0], dict):
+        return []
+    first = items[0]
+    out = [f"      keys: {sorted(first)[:18]}"]
+    for key in sorted(first)[:8]:
+        value = first[key]
+        if isinstance(value, (dict, list)):
+            value = f"<{type(value).__name__} {len(value)}>"
+        out.append(f"      {key:<18} {str(value)[:60]!r}")
+    return out
 
 
 def _first_object(node, depth: int = 0):

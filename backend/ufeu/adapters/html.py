@@ -150,4 +150,16 @@ class HtmlEngine(BaseEngine):
             )
             if listing:
                 listings.append(listing)
+
+        if nodes and not listings:
+            inner = sorted({
+                f"{c.name}." + ".".join((c.get("class") or [])[:2])
+                for c in nodes[0].find_all(True)
+                if c.get_text(strip=True) or c.get("href")
+            })[:12]
+            raise EngineError(
+                f"item selector {item_selector!r} matched {len(nodes)} rows but no title and "
+                f"url could be read from them — the field selectors are wrong. "
+                f"Elements inside the first row: {inner}"
+            )
         return listings
