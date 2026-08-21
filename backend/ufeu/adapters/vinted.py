@@ -24,6 +24,10 @@ _bootstrap_lock = asyncio.Lock()
 class VintedEngine(BaseEngine):
     name = "vinted"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._bootstrapped = False
+
     @property
     def base_url(self) -> str:
         return (self.config.get("base_url") or self.market.site).rstrip("/")
@@ -33,20 +37,29 @@ class VintedEngine(BaseEngine):
 
         return f"{self.base_url}/catalog?search_text={quote(query.q)}"
 
+    def _has_session(self) -> bool:
+        # Under impersonation the cookie jar belongs to the browser transport,
+        # not to the shared httpx client, so track the bootstrap explicitly.
+        if self.impersonate:
+            return self._bootstrapped
+        return any(
+            c.name.startswith("access_token_web") or c.name.endswith("_session")
+            for c in self.client.cookies.jar
+        )
+
     async def _ensure_session(self) -> None:
-        """Fetch an anonymous session cookie if the client does not have one."""
-        if any(c.name.startswith("access_token_web") or c.name.endswith("_session")
-               for c in self.client.cookies.jar):
+        """Fetch an anonymous session cookie if we do not already hold one."""
+        if self._has_session():
             return
         async with _bootstrap_lock:
-            if any(c.name.startswith("access_token_web") for c in self.client.cookies.jar):
+            if self._has_session():
                 return
-            response = await self.client.get(
+            response = await self.fetch(
                 self.base_url + "/",
                 headers={**self.headers(), "Accept": "text/html,application/xhtml+xml"},
-                follow_redirects=True,
             )
             response.raise_for_status()
+            self._bootstrapped = True
 
     async def search(self, query: SearchQuery) -> list[Listing]:
         await self._ensure_session()
@@ -62,21 +75,20 @@ class VintedEngine(BaseEngine):
         if query.max_price_eur:
             params["price_to"] = str(int(query.max_price_eur))
 
-        response = await self.client.get(
+        response = await self.fetch(
             f"{self.base_url}/api/v2/catalog/items",
             params=params,
             headers={**self.headers(), "Accept": "application/json", "X-Requested-With": "XMLHttpRequest"},
-            follow_redirects=True,
         )
         if response.status_code == 401:
             # The anonymous token expired mid-flight; drop it and retry once.
             self.client.cookies.clear()
+            self._bootstrapped = False
             await self._ensure_session()
-            response = await self.client.get(
+            response = await self.fetch(
                 f"{self.base_url}/api/v2/catalog/items",
                 params=params,
                 headers={**self.headers(), "Accept": "application/json"},
-                follow_redirects=True,
             )
         response.raise_for_status()
 

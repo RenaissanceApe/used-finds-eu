@@ -310,7 +310,7 @@ marketplaces:
     default_enabled: true
     confidence: high
     why: OLX is the leading general classifieds platform in Bulgaria; Bazar.bg is the local challenger.
-    engine_config: {base_url: "https://www.olx.bg", search_path: "/ads/", currency: BGN}
+    engine_config: {impersonate: chrome124, base_url: "https://www.olx.bg", search_path: "/ads/", currency: BGN}
     account: {required_for_search: false, kind: session, signup_url: "https://www.olx.bg/account/", signup_method: [email, phone], captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "Econt/Speedy domestic only; needs forwarder or prepaid label."}
 
@@ -348,6 +348,7 @@ marketplaces:
     confidence: high
     why: Croatia's dominant classifieds site (Styria group), far ahead of any local rival.
     engine_config:
+      impersonate: chrome124
       search_url: "https://www.njuskalo.hr/?ctl=search_ads&keywords={q}"
       item: "li.EntityList-item--Regular"
       fields:
@@ -371,6 +372,7 @@ marketplaces:
     confidence: high
     why: The unambiguous #1 classifieds site in Cyprus, essentially the whole market.
     engine_config:
+      impersonate: chrome124
       search_url: "https://www.bazaraki.com/search/?q={q}"
       item: "div.advert"
       fields:
@@ -462,6 +464,7 @@ marketplaces:
     confidence: medium
     why: Estonia's leading general classifieds site; Osta.ee is the auction-format alternative.
     engine_config:
+      impersonate: chrome124
       search_url: "https://www.okidoki.ee/buy/all/?query={q}"
       item: "div.horiz-offer-card"
       fields:
@@ -653,6 +656,7 @@ marketplaces:
       bigger overall but is overwhelmingly vehicles and farm machinery, so for
       "used items" Adverts is the better default.
     engine_config:
+      impersonate: chrome124
       search_url: "https://www.adverts.ie/search?q={q}"
       item: "li.ad-card, div.ad-card"
       fields:
@@ -700,6 +704,7 @@ marketplaces:
       it one of the most reliable non-eBay integrations here.
     engine_config:
       mode: rest
+      impersonate: chrome124
       search_url: "https://hades.subito.it/v1/search/items?q={q}&t=s&lim={limit}&sort=datedesc"
       root: ads
       fields:
@@ -760,6 +765,7 @@ marketplaces:
     confidence: high
     why: Lithuania's leading general classifieds site. (Vinted is Lithuanian-born and dominates fashion there.)
     engine_config:
+      impersonate: chrome124
       search_url: "https://www.skelbiu.lt/skelbimai/?keywords={q}"
       item: "div.simple-ad, li.simple-ad"
       fields:
@@ -867,7 +873,7 @@ marketplaces:
     why: >-
       Poland's #1 classifieds platform. Poland is the best-value EU market for
       used electronics and tools, and OLX's InPost integration makes logistics easy.
-    engine_config: {base_url: "https://www.olx.pl", search_path: "/oferty/", currency: PLN}
+    engine_config: {impersonate: chrome124, base_url: "https://www.olx.pl", search_path: "/oferty/", currency: PLN}
     account:
       required_for_search: false
       kind: session
@@ -911,7 +917,7 @@ marketplaces:
       Portugal's #1 general classifieds site, and your home market — no shipping
       problem to solve at all. Always search this first: if the item exists
       locally at a sane price, every other row in the results is noise.
-    engine_config: {base_url: "https://www.olx.pt", search_path: "/ads/", currency: EUR}
+    engine_config: {impersonate: chrome124, base_url: "https://www.olx.pt", search_path: "/ads/", currency: EUR}
     account:
       required_for_search: false
       kind: session
@@ -955,7 +961,7 @@ marketplaces:
     default_enabled: true
     confidence: high
     why: Romania's dominant classifieds platform by a wide margin; Publi24 is a distant second.
-    engine_config: {base_url: "https://www.olx.ro", search_path: "/oferte/", currency: RON}
+    engine_config: {impersonate: chrome124, base_url: "https://www.olx.ro", search_path: "/oferte/", currency: RON}
     account: {required_for_search: false, kind: session, signup_url: "https://www.olx.ro/cont/", signup_method: [email, phone], captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "Sameday/Cargus domestic. Prepaid label works; 6-10 days to PT."}
 

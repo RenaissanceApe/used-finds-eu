@@ -144,7 +144,7 @@ class JsonApiEngine(BaseEngine):
             )
 
         if mode == "next_data":
-            response = await self.client.get(url, headers=self.headers(), follow_redirects=True)
+            response = await self.fetch(url, headers=self.headers())
             response.raise_for_status()
             payload, strategy = extract_embedded_json(response.text)
             if payload is None:
@@ -167,14 +167,14 @@ class JsonApiEngine(BaseEngine):
             body = body_template.replace("{q}", query.q.replace('"', '\\"')).replace(
                 "{limit}", str(query.limit)
             )
-            response = await self.client.post(
+            response = await self.fetch(
                 url,
+                method="POST",
                 headers={**self.headers(), "Content-Type": "application/json"},
                 content=body.encode("utf-8"),
-                follow_redirects=True,
             )
         else:
-            response = await self.client.get(url, headers=self.headers(), follow_redirects=True)
+            response = await self.fetch(url, headers=self.headers())
         response.raise_for_status()
         try:
             return response.json()

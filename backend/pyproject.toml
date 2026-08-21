@@ -22,6 +22,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.2", "pytest-asyncio>=0.23", "respx>=0.21"]
+# Browser TLS fingerprint for the sites that reject plain Python clients.
+browser = ["curl_cffi>=0.7"]
 
 [project.scripts]
 ufeu = "ufeu.cli:main"

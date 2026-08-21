@@ -15,9 +15,11 @@ from urllib.parse import quote, urljoin
 
 import httpx
 
+from .. import http as ufeu_http
 from ..catalog import Marketplace
 from ..models import Listing, MarketResult, ResultStatus, SearchQuery
 from ..normalize import clean_text, parse_datetime, parse_price, relevance, slugify
+from ..settings import REQUEST_TIMEOUT
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +46,8 @@ class BaseEngine(abc.ABC):
         self.client = client
         self.credentials = credentials or {}
         self.config = market.engine_config
+        self._browser: ufeu_http.BrowserTransport | None = None
+        self._impersonation_warned = False
 
     # ---------------------------------------------------------------- helpers
 
@@ -103,6 +107,66 @@ class BaseEngine(abc.ABC):
             raw=extra.get("raw") or {},
         )
 
+    # ------------------------------------------------------------- transport
+
+    @property
+    def impersonate(self) -> str | None:
+        """Which browser fingerprint this marketplace needs, if any.
+
+        Set `impersonate: chrome124` (or `true`) in engine_config for sites that
+        reject Python's TLS handshake. Off by default — plain httpx is faster
+        and perfectly welcome almost everywhere.
+        """
+        value = self.config.get("impersonate")
+        if not value:
+            return None
+        return ufeu_http.DEFAULT_PROFILE if value is True else str(value)
+
+    async def fetch(
+        self,
+        url: str,
+        *,
+        method: str = "GET",
+        params: dict[str, str] | None = None,
+        headers: dict[str, str] | None = None,
+        content: bytes | None = None,
+        data: dict[str, str] | None = None,
+    ) -> httpx.Response:
+        """Make a request, through a browser fingerprint where one is required.
+
+        Falls back to httpx — loudly, once — when the marketplace asks for
+        impersonation but curl_cffi is not installed, so a missing optional
+        dependency degrades to "probably blocked" rather than "cannot start".
+        """
+        profile = self.impersonate
+        if profile and ufeu_http.available():
+            if self._browser is None:
+                self._browser = ufeu_http.BrowserTransport(profile)
+            return await self._browser.request(
+                method, url, params=params, headers=headers,
+                content=content, data=data, timeout=REQUEST_TIMEOUT,
+            )
+
+        if profile and not self._impersonation_warned:
+            self._impersonation_warned = True
+            log.warning(
+                "%s needs a browser TLS fingerprint but curl_cffi is unavailable (%s); "
+                "falling back to httpx, which this site will probably refuse. "
+                "Install it with: pip install curl_cffi",
+                self.market.id,
+                ufeu_http.unavailable_reason(),
+            )
+
+        return await self.client.request(
+            method, url, params=params, headers=headers,
+            content=content, data=data, follow_redirects=True,
+        )
+
+    async def aclose(self) -> None:
+        if self._browser is not None:
+            await self._browser.aclose()
+            self._browser = None
+
     def headers(self) -> dict[str, str]:
         base = {
             "Accept-Language": "en,pt;q=0.9,es;q=0.8,de;q=0.7,fr;q=0.6",
@@ -157,6 +221,8 @@ class BaseEngine(abc.ABC):
             log.exception("engine %s failed for %s", self.name, self.market.id)
             result.status = ResultStatus.ERROR
             result.error = f"{type(exc).__name__}: {exc}"
+        finally:
+            await self.aclose()
         result.elapsed_ms = int((time.perf_counter() - started) * 1000)
         return result
 

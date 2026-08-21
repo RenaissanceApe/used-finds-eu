@@ -1,0 +1,11 @@
+# Optional: browser TLS fingerprint.
+#
+# Ten marketplaces (OLX ×4, Subito, Adverts.ie, Bazaraki, Okidoki, Skelbiu,
+# Njuškalo) refuse plain Python clients at the TLS handshake, regardless of IP.
+# curl_cffi wraps curl-impersonate and reproduces Chrome's exact JA3/HTTP2
+# fingerprint, which is what those edges are checking.
+#
+#   pip install -r backend/requirements-browser.txt
+#
+# Everything works without it; those ten sites just keep returning 403.
+curl_cffi>=0.7

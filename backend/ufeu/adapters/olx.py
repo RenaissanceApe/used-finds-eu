@@ -47,11 +47,10 @@ class OlxEngine(BaseEngine):
         if query.max_price_eur:
             params["filter_float_price:to"] = str(int(query.max_price_eur))
 
-        response = await self.client.get(
+        response = await self.fetch(
             f"{self.base_url}/api/v1/offers/",
             params=params,
             headers={**self.headers(), "Accept": "application/json"},
-            follow_redirects=True,
         )
         response.raise_for_status()
         try:

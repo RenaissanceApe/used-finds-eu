@@ -106,7 +106,7 @@ class HtmlEngine(BaseEngine):
             await asyncio.sleep(1.0 / rps)
 
         url = self.build_search_url(query)
-        response = await self.client.get(url, headers=self.headers(), follow_redirects=True)
+        response = await self.fetch(url, headers=self.headers())
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "lxml")

@@ -142,12 +142,27 @@ Run from a GitHub Codespace — an Azure datacenter IP — against 31 marketplac
 | Needs credentials | 2 | eBay, Blocket |
 | Manual by design | 3 | leboncoin, Facebook, Luxauto |
 
-**The blocks are the headline, and they are not a code problem.** Every one came
-back `403` in 50–110ms, which is a CDN edge refusing on IP reputation before
-anything inspected the request. OLX's API and Subito's `hades` endpoint work
-normally from residential connections. This is the single strongest argument for
-running the backend on a residential connection rather than a VPS or a cloud
-IDE — see docs/05-hosting.md.
+### Re-run from a residential connection (same day)
+
+The obvious hypothesis — datacenter IP reputation — turned out to be **wrong**.
+Re-running from a residential connection in Portugal moved only two sites
+(Jófogás and Vendora now reach the page and fail on selectors instead). Ten
+still refused, in 109–167ms, `olx.pt` among them.
+
+**A Portuguese address, refused by the Portuguese OLX, in 116ms.** That rules
+out geo-fencing and IP reputation together, and it is far too fast for anything
+to have read the request. What is left is the handshake: Python's TLS
+ClientHello (JA3/JA4) and HTTP/2 SETTINGS frame match no browser, and
+Cloudflare, Akamai and DataDome reject on that signature at the edge.
+
+Hence `ufeu/http.py` and the optional `curl_cffi` transport, which reproduces
+Chrome's exact fingerprint. `impersonate: chrome124` is set on those ten
+entries. It is optional on purpose — without it they simply keep returning 403,
+and the other twenty-one sources are unaffected.
+
+The lesson worth keeping: *fast* refusals are about who you appear to be, not
+what you asked for. Distinguishing "blocked at the edge" from "blocked after
+inspection" is worth more than any individual selector fix.
 
 ## Being a good guest
 

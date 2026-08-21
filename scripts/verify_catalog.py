@@ -22,10 +22,12 @@ import argparse
 import asyncio
 import re
 import sys
+import textwrap
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
+from ufeu import http as ufeu_http                    # noqa: E402
 from ufeu.catalog import load_catalog                 # noqa: E402
 from ufeu.models import MarketResult, ResultStatus, SearchQuery  # noqa: E402
 from ufeu.orchestrator import search                  # noqa: E402
@@ -103,7 +105,11 @@ async def main() -> int:
         print(f"{heading} ({len(rows)})")
         for result in sorted(rows, key=lambda r: r.country):
             detail = result.error or f"{len(result.listings)} listings"
-            print(f"  {icon} {result.country:<3} {result.marketplace_id:<22} {result.elapsed_ms:>5}ms  {detail[:150]}")
+            print(f"  {icon} {result.country:<3} {result.marketplace_id:<22} {result.elapsed_ms:>5}ms")
+            # Never truncate: for a broken source this line *is* the fix — the
+            # JMESPath root or the CSS selector to paste into the catalogue.
+            for line in textwrap.wrap(detail, width=96) or [""]:
+                print(f"        {line}")
         print()
 
     working, broken, blocked = len(buckets["ok"]), len(buckets["broken"]), len(buckets["blocked"])
@@ -111,12 +117,22 @@ async def main() -> int:
           f"{len(buckets['auth'])} need credentials\n")
 
     if blocked:
-        fast = [r for r in buckets["blocked"] if r.elapsed_ms < 300]
-        if fast:
-            print(f"{len(fast)} of the blocks came back in under 300ms, which means the refusal")
-            print("happened at the CDN edge on IP reputation — nothing about the request was")
-            print("inspected. If you are on a VPS, a cloud IDE or a VPN, re-run this from a")
-            print("normal residential connection before changing any code.\n")
+        wants_browser = [
+            r for r in buckets["blocked"]
+            if catalog.by_id[r.marketplace_id].engine_config.get("impersonate")
+        ]
+        if wants_browser and not ufeu_http.available():
+            print(f"{len(wants_browser)} of these are configured to need a browser TLS fingerprint,")
+            print(f"which is unavailable here ({ufeu_http.unavailable_reason()}). These sites reject")
+            print("Python's TLS handshake regardless of your IP. Install it and re-run:\n")
+            print("    pip install -r backend/requirements-browser.txt\n")
+        elif wants_browser:
+            print("These still refuse us *with* a browser fingerprint, so the block is not the")
+            print("handshake. Next suspects, in order: the IP itself (try a different network),")
+            print("a geo restriction, or a JS challenge that needs a real browser engine.\n")
+        else:
+            print("These are not configured for impersonation. If the refusal was fast, try")
+            print("adding `impersonate: chrome124` to their engine_config and re-running.\n")
     if broken:
         print("Broken sources report what they found instead of what they expected — paste")
         print("those lines back and the catalogue entry can usually be fixed from them.\n")
