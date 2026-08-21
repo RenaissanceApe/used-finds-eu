@@ -35,6 +35,18 @@ MAX_CONCURRENCY = int(os.environ.get("UFEU_CONCURRENCY", "8"))
 DEFAULT_LIMIT = int(os.environ.get("UFEU_LIMIT", "24"))
 CACHE_TTL_SECONDS = int(os.environ.get("UFEU_CACHE_TTL", "600"))
 
+# Browser origins allowed to call the API. The local UI is same-origin, but the
+# static GitHub Pages build is not — it talks to whatever backend you point it
+# at, so its origin has to be allowed explicitly.
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "UFEU_ALLOWED_ORIGINS",
+        "http://localhost:8000,http://127.0.0.1:8000,https://renaissanceape.github.io",
+    ).split(",")
+    if origin.strip()
+]
+
 # Home base. Everything in shipping.py is measured relative to this.
 HOME_COUNTRY = os.environ.get("UFEU_HOME_COUNTRY", "PT")
 HOME_CURRENCY = os.environ.get("UFEU_HOME_CURRENCY", "EUR")

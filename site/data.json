@@ -1,0 +1,3143 @@
+{
+ "generated": "2026-08-21",
+ "catalog_updated": "2026-08-21",
+ "countries": {
+  "AT": {
+   "name": "Austria",
+   "currency": "EUR",
+   "zone": 3
+  },
+  "BE": {
+   "name": "Belgium",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "BG": {
+   "name": "Bulgaria",
+   "currency": "BGN",
+   "zone": 4
+  },
+  "HR": {
+   "name": "Croatia",
+   "currency": "EUR",
+   "zone": 3
+  },
+  "CY": {
+   "name": "Cyprus",
+   "currency": "EUR",
+   "zone": 5
+  },
+  "CZ": {
+   "name": "Czechia",
+   "currency": "CZK",
+   "zone": 3
+  },
+  "DK": {
+   "name": "Denmark",
+   "currency": "DKK",
+   "zone": 3
+  },
+  "EE": {
+   "name": "Estonia",
+   "currency": "EUR",
+   "zone": 4
+  },
+  "FI": {
+   "name": "Finland",
+   "currency": "EUR",
+   "zone": 4
+  },
+  "FR": {
+   "name": "France",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "DE": {
+   "name": "Germany",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "GR": {
+   "name": "Greece",
+   "currency": "EUR",
+   "zone": 4
+  },
+  "HU": {
+   "name": "Hungary",
+   "currency": "HUF",
+   "zone": 3
+  },
+  "IE": {
+   "name": "Ireland",
+   "currency": "EUR",
+   "zone": 3
+  },
+  "IT": {
+   "name": "Italy",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "LV": {
+   "name": "Latvia",
+   "currency": "EUR",
+   "zone": 4
+  },
+  "LT": {
+   "name": "Lithuania",
+   "currency": "EUR",
+   "zone": 4
+  },
+  "LU": {
+   "name": "Luxembourg",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "MT": {
+   "name": "Malta",
+   "currency": "EUR",
+   "zone": 5
+  },
+  "NL": {
+   "name": "Netherlands",
+   "currency": "EUR",
+   "zone": 2
+  },
+  "PL": {
+   "name": "Poland",
+   "currency": "PLN",
+   "zone": 3
+  },
+  "PT": {
+   "name": "Portugal",
+   "currency": "EUR",
+   "zone": 0
+  },
+  "RO": {
+   "name": "Romania",
+   "currency": "RON",
+   "zone": 4
+  },
+  "SK": {
+   "name": "Slovakia",
+   "currency": "EUR",
+   "zone": 3
+  },
+  "SI": {
+   "name": "Slovenia",
+   "currency": "EUR",
+   "zone": 3
+  },
+  "ES": {
+   "name": "Spain",
+   "currency": "EUR",
+   "zone": 1
+  },
+  "SE": {
+   "name": "Sweden",
+   "currency": "SEK",
+   "zone": 4
+  },
+  "EU": {
+   "name": "Pan-European",
+   "currency": "EUR",
+   "zone": 2
+  }
+ },
+ "marketplaces": [
+  {
+   "id": "willhaben_at",
+   "name": "willhaben.at",
+   "country": "AT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.willhaben.at",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Austria's dominant classifieds site — the local Kleinanzeigen, ~4M+ monthly users in a 9M country.",
+   "ships_to_pt": false,
+   "shipping_notes": "willhaben has \"Kaufabwicklung\" with paid shipping, but Austrian sellers rarely ship outside AT/DE. Route via a DE/AT forwarder or ask the seller to accept a prepaid label you generate (see shipping strategy `prepaid_label`).",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.willhaben.at/iad/registrieren",
+    "signup_method": [
+     "email"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.willhaben.at/iad/kaufen-und-verkaufen/marktplatz?keyword=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_at",
+   "name": "Vinted Austria",
+   "country": "AT",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.at",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.at/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.at/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_at",
+   "name": "eBay AT",
+   "country": "AT",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.at",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.at/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "tweedehands_be",
+   "name": "2dehands.be / 2ememain.be",
+   "country": "BE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.2dehands.be",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The Belgian arm of the Marktplaats (Adevinta) stack and the country's",
+   "ships_to_pt": false,
+   "shipping_notes": "Native shipping only within BE/NL. Cross-border needs a prepaid label or forwarder.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.2dehands.be/identity/v2/registration",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.2dehands.be/lrp/api/search?query=%QUERY%&limit=24&offset=0",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_be",
+   "name": "Vinted Belgium",
+   "country": "BE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.be",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.be/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.be/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_be",
+   "name": "eBay BE",
+   "country": "BE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.befr.ebay.be",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.befr.ebay.be/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "olx_bg",
+   "name": "OLX.bg",
+   "country": "BG",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.olx.bg",
+   "focus": [
+    "general",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "olx",
+   "enabled": true,
+   "confidence": "high",
+   "why": "OLX is the leading general classifieds platform in Bulgaria; Bazar.bg is the local challenger.",
+   "ships_to_pt": false,
+   "shipping_notes": "Econt/Speedy domestic only; needs forwarder or prepaid label.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.olx.bg/account/",
+    "signup_method": [
+     "email",
+     "phone"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.olx.bg/ads/q-%QUERY%/",
+    "encoding": "dash"
+   }
+  },
+  {
+   "id": "bazar_bg",
+   "name": "Bazar.bg",
+   "country": "BG",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://bazar.bg",
+   "focus": [
+    "general"
+   ],
+   "engine": "html",
+   "enabled": false,
+   "confidence": "medium",
+   "why": "Long-running Bulgarian classifieds portal, strong in electronics and hobby goods.",
+   "ships_to_pt": false,
+   "shipping_notes": null,
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://bazar.bg/obiavi?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "bazaraki_cy",
+   "name": "Bazaraki",
+   "country": "CY",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.bazaraki.com",
+   "focus": [
+    "general",
+    "vehicles",
+    "property"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The unambiguous",
+   "ships_to_pt": false,
+   "shipping_notes": "Island market — shipping to PT is expensive; treat as low priority unless the item is rare.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.bazaraki.com/accounts/signup/",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.bazaraki.com/search/?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "bazos_cz",
+   "name": "Bazoš.cz",
+   "country": "CZ",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.bazos.cz",
+   "focus": [
+    "general",
+    "electronics",
+    "hobby"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Czechia's highest-traffic peer-to-peer ads site. Deliberately primitive HTML, no JS, no bot defences — which makes it one of the easiest and most reliable sources in this whole catalogue.",
+   "ships_to_pt": false,
+   "shipping_notes": "Zásilkovna/Packeta reaches PT cheaply — Packeta has PT pickup points. Good prepaid-label candidate.",
+   "account": {
+    "kind": "none",
+    "required": false,
+    "signup_url": "https://www.bazos.cz/pridat-inzerat.php",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Posting needs only email + SMS confirmation; browsing needs nothing."
+   },
+   "search": {
+    "url": "https://www.bazos.cz/search.php?hledat=%QUERY%&hlokalita=&humkreis=25&cenaod=&cenado=",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_cz",
+   "name": "Vinted Czechia",
+   "country": "CZ",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.cz",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.cz/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.cz/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "sbazar_cz",
+   "name": "Sbazar.cz",
+   "country": "CZ",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.sbazar.cz",
+   "focus": [
+    "general"
+   ],
+   "engine": "json_api",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Seznam's classifieds arm; second to Bazoš but better mobile reach.",
+   "ships_to_pt": false,
+   "shipping_notes": null,
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.sbazar.cz/api/v1/items/search?query=%QUERY%&limit=24",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "kleinanzeigen_de",
+   "name": "Kleinanzeigen.de",
+   "country": "DE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.kleinanzeigen.de",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "bikes"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Germany's #1 classifieds platform (the former eBay Kleinanzeigen, spun out in 2021), 30M+ users. The deepest pool of used goods in the EU, and German sellers price hardware realistically.",
+   "ships_to_pt": false,
+   "shipping_notes": "Has integrated DHL/Hermes shipping but domestic-only. Germany is the best market for the `forwarder_de` strategy (myGermany, Meest) and for prepaid labels — German sellers are used to \"Paket\" workflows.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.kleinanzeigen.de/m-einloggen.html",
+    "signup_method": [
+     "email"
+    ],
+    "captcha": true,
+    "notes": "Aggressive bot detection. Keep rate limits low and prefer a residential connection."
+   },
+   "search": {
+    "url": "https://www.kleinanzeigen.de/s-%QUERY%/k0",
+    "encoding": "slug"
+   }
+  },
+  {
+   "id": "vinted_de",
+   "name": "Vinted Germany",
+   "country": "DE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.de",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.de/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.de/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_de",
+   "name": "eBay DE",
+   "country": "DE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.de",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.de/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "dba_dk",
+   "name": "DBA (Den Blå Avis)",
+   "country": "DK",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.dba.dk",
+   "focus": [
+    "general",
+    "furniture",
+    "vehicles"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Denmark's default second-hand marketplace for four decades, now Schibsted-owned.",
+   "ships_to_pt": false,
+   "shipping_notes": "DAO/GLS domestic. Prepaid label or forwarder for PT.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.dba.dk/bruger/opret",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.dba.dk/soeg/?soeg=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_dk",
+   "name": "Vinted Denmark",
+   "country": "DK",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.dk",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.dk/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.dk/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "okidoki_ee",
+   "name": "Okidoki.ee",
+   "country": "EE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.okidoki.ee",
+   "focus": [
+    "general"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "medium",
+   "why": "Estonia's leading general classifieds site; Osta.ee is the auction-format alternative.",
+   "ships_to_pt": false,
+   "shipping_notes": "Omniva/Itella. Baltic → PT via prepaid label works but is slow (7-12d).",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.okidoki.ee/buy/all/?query=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "osta_ee",
+   "name": "Osta.ee",
+   "country": "EE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.osta.ee",
+   "focus": [
+    "general",
+    "auctions",
+    "collectibles"
+   ],
+   "engine": "html",
+   "enabled": false,
+   "confidence": "medium",
+   "why": "Estonia's eBay-style auction site, strong for collectibles and electronics.",
+   "ships_to_pt": false,
+   "shipping_notes": null,
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.osta.ee/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_ee",
+   "name": "Vinted Estonia",
+   "country": "EE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.ee",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.ee/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.ee/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_es",
+   "name": "Vinted Spain",
+   "country": "ES",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.es",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.es/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.es/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "wallapop_es",
+   "name": "Wallapop",
+   "country": "ES",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://es.wallapop.com",
+   "focus": [
+    "general",
+    "electronics",
+    "furniture",
+    "fashion"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Spain's #1 general second-hand app (with Vinted they are ~80% of Spanish resale usage). Strategically the most important non-PT market for you: Spain shares a land border, so ES→PT is the cheapest and fastest corridor in Europe, and border-town pickup is a real option.",
+   "ships_to_pt": false,
+   "shipping_notes": "Wallapop Envíos (Correos/SEUR) is Spain-domestic, BUT this is the one market where `border_pickup` shines: ship to a Correos office in Tui, Badajoz or Ayamonte and collect by car. Also the best `forwarder_es` target.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://es.wallapop.com/signup",
+    "signup_method": [
+     "email",
+     "phone",
+     "google",
+     "apple"
+    ],
+    "captcha": true,
+    "notes": "Phone verification is effectively mandatory for messaging sellers."
+   },
+   "search": {
+    "url": "https://api.wallapop.com/api/v3/search?keywords=%QUERY%&source=search_box&longitude=-3.69&latitude=40.42",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "milanuncios_es",
+   "name": "Milanuncios",
+   "country": "ES",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.milanuncios.com",
+   "focus": [
+    "general",
+    "vehicles"
+   ],
+   "engine": "manual",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Spain's long-standing free classifieds site; strong for vehicles and bulky goods. DataDome-protected, so manual.",
+   "ships_to_pt": false,
+   "shipping_notes": "Border pickup applies as with Wallapop.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.milanuncios.com/anuncios/?s=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_es",
+   "name": "eBay ES",
+   "country": "ES",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.es",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.es/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "vinted",
+   "name": "Vinted (EU pool)",
+   "country": "EU",
+   "rank": 1,
+   "scope": "pan_eu",
+   "site": "https://www.vinted.pt",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": true,
+   "confidence": "high",
+   "why": "#1 second-hand app by MAU in FR/PT/ES/IT/LT and top-3 in most of the rest of the EU. Crucially, Vinted runs *connected country pools*: one query against vinted.pt already returns sellers across the Iberian/EU pool, so a single endpoint covers most of Europe. The per-country entries below exist for catalogue completeness and are disabled by default to avoid duplicate hits.",
+   "ships_to_pt": true,
+   "shipping_notes": "Best-in-class. Vinted's integrated shipping covers PT natively (CTT, DPD, Vinted Go lockers) and cross-border inside the connected pool, with Buyer Protection. This is the single easiest route for goods into Portugal.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.pt/member/signup",
+    "signup_method": [
+     "email",
+     "google",
+     "facebook",
+     "apple"
+    ],
+    "captcha": true,
+    "notes": "Search works anonymously (the engine bootstraps an anonymous session cookie). An account is only needed to message sellers and buy. Sign up by hand once, then import the session cookie via the Accounts tab."
+   },
+   "search": {
+    "url": "https://www.vinted.pt/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "catawiki",
+   "name": "Catawiki",
+   "country": "EU",
+   "rank": 2,
+   "scope": "pan_eu",
+   "site": "https://www.catawiki.com",
+   "focus": [
+    "collectibles",
+    "art",
+    "watches",
+    "vintage"
+   ],
+   "engine": "html",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Pan-EU curated auction house for used collectibles; NL-based, ships EU-wide.",
+   "ships_to_pt": true,
+   "shipping_notes": "Sellers quote shipping to PT at checkout.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.catawiki.com/en/register",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.catawiki.com/en/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "facebook_marketplace",
+   "name": "Facebook Marketplace",
+   "country": "EU",
+   "rank": 2,
+   "scope": "pan_eu",
+   "site": "https://www.facebook.com/marketplace",
+   "focus": [
+    "general",
+    "furniture",
+    "local"
+   ],
+   "engine": "manual",
+   "enabled": true,
+   "confidence": "high",
+   "why": "By raw volume this is the biggest second-hand venue in most EU countries, especially for furniture and local pickup. But it is strictly local-radius, has no public API, and automated access is an explicit ToS violation that gets accounts banned. Included as a deep link only — the app builds the search URL, you click it.",
+   "ships_to_pt": false,
+   "shipping_notes": "Local pickup culture; cross-border almost always needs a private arrangement.",
+   "account": {
+    "kind": "session",
+    "required": true,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Use your existing personal account. Do not automate this one."
+   },
+   "search": {
+    "url": "https://www.facebook.com/marketplace/search/?query=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "backmarket",
+   "name": "Back Market",
+   "country": "EU",
+   "rank": 3,
+   "scope": "pan_eu",
+   "site": "https://www.backmarket.pt",
+   "focus": [
+    "electronics_refurbished"
+   ],
+   "engine": "html",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Not peer-to-peer, but the reference EU marketplace for refurbished electronics with a Portuguese storefront and warranty. Worth having in the comparison when the query is a phone/laptop.",
+   "ships_to_pt": true,
+   "shipping_notes": "Ships to PT domestically",
+   "account": {
+    "kind": "none",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.backmarket.pt/pt-pt/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vestiaire",
+   "name": "Vestiaire Collective",
+   "country": "EU",
+   "rank": 3,
+   "scope": "pan_eu",
+   "site": "https://www.vestiairecollective.com",
+   "focus": [
+    "luxury_fashion"
+   ],
+   "engine": "html",
+   "enabled": false,
+   "confidence": "high",
+   "why": "The pan-EU platform for pre-owned designer fashion; authenticates items.",
+   "ships_to_pt": true,
+   "shipping_notes": "Centralised authentication hub then onward shipping to PT.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vestiairecollective.com/register/",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vestiairecollective.com/search/?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "tori_fi",
+   "name": "Tori.fi",
+   "country": "FI",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.tori.fi",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Finland's dominant peer-to-peer marketplace (Schibsted), now merged with Oikotie's goods vertical.",
+   "ships_to_pt": false,
+   "shipping_notes": "Posti/Matkahuolto domestic. Nordic → PT is pricey; prefer Vinted for FI fashion.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.tori.fi/account/register",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.tori.fi/recommerce/forsale/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_fi",
+   "name": "Vinted Finland",
+   "country": "FI",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.fi",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.fi/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.fi/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_fr",
+   "name": "Vinted France",
+   "country": "FR",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.fr",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.fr/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.fr/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "leboncoin_fr",
+   "name": "leboncoin",
+   "country": "FR",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.leboncoin.fr",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "manual",
+   "enabled": true,
+   "confidence": "high",
+   "why": "France's #1 general classifieds site by a wide margin and, for non-fashion goods, the single most valuable EU market to search. Downgraded to `manual` on purpose: leboncoin sits behind DataDome, and hammering it from a server gets the IP blocked within minutes. The app emits a deep search link; if you want it automated, drive it with your own logged-in browser session (see docs/02-accounts.md, \"browser-session engines\").",
+   "ships_to_pt": true,
+   "shipping_notes": "leboncoin has integrated \"Colis\" shipping (Mondial Relay / Colissimo). Cross-border to PT is not offered natively, but France is the strongest corridor for the diaspora-van route — see shipping strategy `diaspora_van`.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.leboncoin.fr/compte/creation",
+    "signup_method": [
+     "email",
+     "phone"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.leboncoin.fr/recherche?text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_fr",
+   "name": "eBay FR",
+   "country": "FR",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.fr",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.fr/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "vendora_gr",
+   "name": "Vendora.gr",
+   "country": "GR",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vendora.gr",
+   "focus": [
+    "general",
+    "fashion",
+    "electronics"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "medium",
+   "why": "Greece's largest peer-to-peer marketplace for general goods. The Greek market is fragmented (car.gr owns vehicles, Skroutz owns retail), so confidence is medium and Vinted GR is worth running alongside.",
+   "ships_to_pt": false,
+   "shipping_notes": "ELTA/ACS domestic. GR → PT is a long, costly corridor.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vendora.gr/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_gr",
+   "name": "Vinted Greece",
+   "country": "GR",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.gr",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.gr/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.gr/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "njuskalo_hr",
+   "name": "Njuškalo",
+   "country": "HR",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.njuskalo.hr",
+   "focus": [
+    "general",
+    "vehicles",
+    "electronics"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Croatia's dominant classifieds site (Styria group), far ahead of any local rival.",
+   "ships_to_pt": false,
+   "shipping_notes": "Overseas/Hrvatska pošta; usually needs a prepaid label.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.njuskalo.hr/registracija",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.njuskalo.hr/?ctl=search_ads&keywords=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_hr",
+   "name": "Vinted Croatia",
+   "country": "HR",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.hr",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.hr/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.hr/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "jofogas_hu",
+   "name": "Jófogás.hu",
+   "country": "HU",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.jofogas.hu",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Hungary's leading general classifieds site (Schibsted/Adevinta lineage); Vatera covers auctions.",
+   "ships_to_pt": false,
+   "shipping_notes": "MPL/Packeta. Packeta reaches PT — good prepaid-label corridor.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.jofogas.hu/regisztracio",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.jofogas.hu/magyarorszag?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_hu",
+   "name": "Vinted Hungary",
+   "country": "HU",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.hu",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.hu/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.hu/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "adverts_ie",
+   "name": "Adverts.ie",
+   "country": "IE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.adverts.ie",
+   "focus": [
+    "general",
+    "electronics",
+    "hobby"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Ireland's main peer-to-peer marketplace for general goods. DoneDeal is bigger overall but is overwhelmingly vehicles and farm machinery, so for \"used items\" Adverts is the better default.",
+   "ships_to_pt": true,
+   "shipping_notes": "An Post + Adverts Delivery ships EU-wide; Irish sellers are used to posting abroad.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.adverts.ie/register/",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.adverts.ie/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_ie",
+   "name": "Vinted Ireland",
+   "country": "IE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.ie",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.ie/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.ie/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_ie",
+   "name": "eBay IE",
+   "country": "IE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.ie",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.ie/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "subito_it",
+   "name": "Subito.it",
+   "country": "IT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.subito.it",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Italy's #1 second-hand marketplace, roughly a third of all Italian resale app usage. Its search backend (hades.subito.it) returns clean JSON, making it one of the most reliable non-eBay integrations here.",
+   "ships_to_pt": false,
+   "shipping_notes": "\"Spedizione con Subito\" (TuttoSubito) is domestic-only. Italian sellers will usually accept a prepaid label; Poste Italiane → PT is ~€15-25/2kg.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://areariservata.subito.it/registrazione",
+    "signup_method": [
+     "email",
+     "facebook",
+     "google"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://hades.subito.it/v1/search/items?q=%QUERY%&t=s&lim=24&sort=datedesc",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_it",
+   "name": "Vinted Italy",
+   "country": "IT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.it",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.it/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.it/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_it",
+   "name": "eBay IT",
+   "country": "IT",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.it",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.it/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "skelbiu_lt",
+   "name": "Skelbiu.lt",
+   "country": "LT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.skelbiu.lt",
+   "focus": [
+    "general",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Lithuania's leading general classifieds site. (Vinted is Lithuanian-born and dominates fashion there.)",
+   "ships_to_pt": false,
+   "shipping_notes": "LP Express/Omniva; Vinted is the better LT route.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.skelbiu.lt/skelbimai/?keywords=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_lt",
+   "name": "Vinted Lithuania",
+   "country": "LT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.lt",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.lt/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.lt/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "luxauto_lu",
+   "name": "Luxauto / annonces.lu",
+   "country": "LU",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.luxauto.lu",
+   "focus": [
+    "general",
+    "vehicles"
+   ],
+   "engine": "manual",
+   "enabled": true,
+   "confidence": "low",
+   "why": "Luxembourg has no dominant native second-hand app — the market is small and cross-border by nature. Luxembourgers overwhelmingly use leboncoin.fr, Kleinanzeigen.de, 2dehands.be and Vinted LU. Kept as a manual deep link; for real LU coverage rely on the FR/DE/BE entries and Vinted.",
+   "ships_to_pt": false,
+   "shipping_notes": "Strong diaspora corridor: LU → PT vans run weekly. See shipping strategy `diaspora_van`.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.luxauto.lu/fr/recherche?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_lu",
+   "name": "Vinted Luxembourg",
+   "country": "LU",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.lu",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.lu/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.lu/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ss_lv",
+   "name": "SS.lv",
+   "country": "LV",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.ss.lv",
+   "focus": [
+    "general",
+    "electronics",
+    "vehicles",
+    "property"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Latvia's overwhelmingly dominant classifieds portal. Like Bazoš, it is plain server-rendered HTML with no bot defences — cheap and reliable to query.",
+   "ships_to_pt": false,
+   "shipping_notes": "Omniva/DPD Baltics. Slow but cheap to PT with a prepaid label.",
+   "account": {
+    "kind": "none",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.ss.lv/lv/search-result/?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_lv",
+   "name": "Vinted Latvia",
+   "country": "LV",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.lv",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.lv/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.lv/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "maltapark_mt",
+   "name": "MaltaPark",
+   "country": "MT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.maltapark.com",
+   "focus": [
+    "general"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Malta's single national classifieds site; essentially the entire local market.",
+   "ships_to_pt": false,
+   "shipping_notes": "Island market — shipping is the dominant cost. Low priority.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.maltapark.com/register",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.maltapark.com/search?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "marktplaats_nl",
+   "name": "Marktplaats.nl",
+   "country": "NL",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.marktplaats.nl",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "bikes"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The Netherlands' #1 marketplace since 1999 and one of the highest-penetration classifieds sites in the world. Its `lrp/api/search` endpoint returns clean JSON — a top-tier source alongside eBay and Subito.",
+   "ships_to_pt": false,
+   "shipping_notes": "Integrated shipping (Verzenden via Marktplaats) is NL-only, but Dutch sellers ship abroad more willingly than most. PostNL → PT ~€16/2kg.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.marktplaats.nl/identity/v2/registration",
+    "signup_method": [
+     "email"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.marktplaats.nl/lrp/api/search?query=%QUERY%&limit=24&offset=0&sortBy=SORT_INDEX&sortOrder=DECREASING",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_nl",
+   "name": "Vinted Netherlands",
+   "country": "NL",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.nl",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.nl/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.nl/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_nl",
+   "name": "eBay NL",
+   "country": "NL",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.nl",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.nl/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "olx_pl",
+   "name": "OLX.pl",
+   "country": "PL",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.olx.pl",
+   "focus": [
+    "general",
+    "electronics",
+    "furniture"
+   ],
+   "engine": "olx",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Poland's #1 classifieds platform. Poland is the best-value EU market for used electronics and tools, and OLX's InPost integration makes logistics easy.",
+   "ships_to_pt": true,
+   "shipping_notes": "The standout. OLX Przesyłki uses InPost, and InPost now operates parcel lockers in Portugal — so a Polish seller can drop into a Paczkomat and it reaches a PT locker. Cheapest reliable long-distance corridor in this catalogue.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.olx.pl/account/",
+    "signup_method": [
+     "email",
+     "phone",
+     "google",
+     "facebook"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.olx.pl/oferty/q-%QUERY%/",
+    "encoding": "dash"
+   }
+  },
+  {
+   "id": "vinted_pl",
+   "name": "Vinted Poland",
+   "country": "PL",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.pl",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.pl/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.pl/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "allegro_lokalnie_pl",
+   "name": "Allegro Lokalnie",
+   "country": "PL",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://allegrolokalnie.pl",
+   "focus": [
+    "general",
+    "electronics"
+   ],
+   "engine": "manual",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Allegro's peer-to-peer arm; second to OLX but with better buyer protection.",
+   "ships_to_pt": true,
+   "shipping_notes": "InPost lockers reach PT.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Allegro has an official REST API (developer.allegro.pl) but it does not cover Lokalnie listings."
+   },
+   "search": {
+    "url": "https://allegrolokalnie.pl/oferty/q/%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "ebay_pl",
+   "name": "eBay PL",
+   "country": "PL",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.ebay.pl",
+   "focus": [
+    "general",
+    "electronics",
+    "collectibles",
+    "parts"
+   ],
+   "engine": "ebay_browse",
+   "enabled": true,
+   "confidence": "high",
+   "why": "The only large EU marketplace with a first-class, documented, free public search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and \"used\" is a real filter rather than a guess. Start here.",
+   "ships_to_pt": true,
+   "shipping_notes": "eBay International Shipping / seller-declared EU shipping. Filter by \"ships to PT\" in the UI.",
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://developer.ebay.com/my/keys",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "Free developer account, self-service. Create a production keyset, then `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping, no ToS grey zone, ~5000 calls/day on the default tier."
+   },
+   "search": {
+    "url": "https://www.ebay.pl/sch/i.html?_nkw=%QUERY%&LH_ItemCondition=4",
+    "encoding": "component"
+   },
+   "derived_from": "ebay"
+  },
+  {
+   "id": "olx_pt",
+   "name": "OLX.pt",
+   "country": "PT",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.olx.pt",
+   "focus": [
+    "general",
+    "electronics",
+    "furniture",
+    "vehicles"
+   ],
+   "engine": "olx",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Portugal's #1 general classifieds site, and your home market — no shipping problem to solve at all. Always search this first: if the item exists locally at a sane price, every other row in the results is noise.",
+   "ships_to_pt": true,
+   "shipping_notes": "Domestic. OLX Envios via CTT Expresso, or in-person pickup.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.olx.pt/conta/",
+    "signup_method": [
+     "email",
+     "phone",
+     "google",
+     "facebook"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.olx.pt/ads/q-%QUERY%/",
+    "encoding": "dash"
+   }
+  },
+  {
+   "id": "custojusto_pt",
+   "name": "CustoJusto.pt",
+   "country": "PT",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.custojusto.pt",
+   "focus": [
+    "general",
+    "vehicles"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Portugal's Schibsted-lineage classifieds site; smaller than OLX but still worth the extra call at home.",
+   "ships_to_pt": true,
+   "shipping_notes": "Domestic.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.custojusto.pt/todo-portugal?q=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "olx_ro",
+   "name": "OLX.ro",
+   "country": "RO",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.olx.ro",
+   "focus": [
+    "general",
+    "electronics",
+    "furniture"
+   ],
+   "engine": "olx",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Romania's dominant classifieds platform by a wide margin; Publi24 is a distant second.",
+   "ships_to_pt": false,
+   "shipping_notes": "Sameday/Cargus domestic. Prepaid label works; 6-10 days to PT.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.olx.ro/cont/",
+    "signup_method": [
+     "email",
+     "phone"
+    ],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.olx.ro/oferte/q-%QUERY%/",
+    "encoding": "dash"
+   }
+  },
+  {
+   "id": "vinted_ro",
+   "name": "Vinted Romania",
+   "country": "RO",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.ro",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.ro/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.ro/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "blocket_se",
+   "name": "Blocket.se",
+   "country": "SE",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.blocket.se",
+   "focus": [
+    "general",
+    "furniture",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "json_api",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Sweden's dominant classifieds site (Schibsted); Tradera covers the auction format.",
+   "ships_to_pt": false,
+   "shipping_notes": "PostNord/Schenker. Nordic → PT is expensive; ~€25-40 for 2kg.",
+   "account": {
+    "kind": "session",
+    "required": true,
+    "signup_url": "https://www.blocket.se/registrera",
+    "signup_method": [],
+    "captcha": false,
+    "notes": "The search_bff endpoint wants a bearer token that the site mints for anonymous visitors. Import it once from your browser's devtools into the vault as `bearer`; it lasts weeks."
+   },
+   "search": {
+    "url": "https://api.blocket.se/search_bff/v2/content?q=%QUERY%&lim=24&sort=rel",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "tradera_se",
+   "name": "Tradera",
+   "country": "SE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.tradera.com",
+   "focus": [
+    "auctions",
+    "collectibles",
+    "fashion",
+    "electronics"
+   ],
+   "engine": "json_api",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Sweden's eBay-equivalent auction site, owned by PayPal-alumni Schibsted rivals. Notable because it publishes an official public API — worth wiring up properly if Nordic collectibles matter to you.",
+   "ships_to_pt": false,
+   "shipping_notes": null,
+   "account": {
+    "kind": "api_key",
+    "required": true,
+    "signup_url": "https://api.tradera.com/",
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://api.tradera.com/v3/search/items?query=%QUERY%&pageSize=24",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_se",
+   "name": "Vinted Sweden",
+   "country": "SE",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.se",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.se/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.se/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "bolha_si",
+   "name": "Bolha.com",
+   "country": "SI",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.bolha.com",
+   "focus": [
+    "general",
+    "electronics",
+    "vehicles"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Slovenia's leading classifieds site; same Styria platform as Njuškalo, so the selectors are shared.",
+   "ships_to_pt": false,
+   "shipping_notes": null,
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.bolha.com/?ctl=search_ads&keywords=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_si",
+   "name": "Vinted Slovenia",
+   "country": "SI",
+   "rank": 2,
+   "scope": "national",
+   "site": "https://www.vinted.si",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Top-3 resale app locally; strongest for fashion, kids and home textiles.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.si/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.si/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "bazos_sk",
+   "name": "Bazoš.sk",
+   "country": "SK",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.bazos.sk",
+   "focus": [
+    "general",
+    "electronics",
+    "hobby"
+   ],
+   "engine": "html",
+   "enabled": true,
+   "confidence": "high",
+   "why": "Slovakia's top peer-to-peer ads site; same plain-HTML stack as Bazoš.cz.",
+   "ships_to_pt": false,
+   "shipping_notes": "Packeta reaches PT pickup points.",
+   "account": {
+    "kind": "none",
+    "required": false,
+    "signup_url": null,
+    "signup_method": [],
+    "captcha": false,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.bazos.sk/search.php?hledat=%QUERY%&hlokalita=&humkreis=25",
+    "encoding": "component"
+   }
+  },
+  {
+   "id": "vinted_sk",
+   "name": "Vinted Slovakia",
+   "country": "SK",
+   "rank": 1,
+   "scope": "national",
+   "site": "https://www.vinted.sk",
+   "focus": [
+    "fashion",
+    "kids",
+    "home",
+    "books"
+   ],
+   "engine": "vinted",
+   "enabled": false,
+   "confidence": "high",
+   "why": "Vinted is the most-used second-hand app in this country.",
+   "ships_to_pt": true,
+   "shipping_notes": "Cross-border shipping inside the Vinted pool, Buyer Protection included.",
+   "account": {
+    "kind": "session",
+    "required": false,
+    "signup_url": "https://www.vinted.sk/member/signup",
+    "signup_method": [],
+    "captcha": true,
+    "notes": null
+   },
+   "search": {
+    "url": "https://www.vinted.sk/catalog?search_text=%QUERY%",
+    "encoding": "component"
+   }
+  }
+ ],
+ "shipping": {
+  "zones": {
+   "PT": 0,
+   "EU": 2,
+   "ES": 1,
+   "FR": 2,
+   "IT": 2,
+   "DE": 2,
+   "BE": 2,
+   "NL": 2,
+   "LU": 2,
+   "AT": 3,
+   "CZ": 3,
+   "SK": 3,
+   "SI": 3,
+   "PL": 3,
+   "HU": 3,
+   "HR": 3,
+   "DK": 3,
+   "IE": 3,
+   "SE": 4,
+   "FI": 4,
+   "EE": 4,
+   "LV": 4,
+   "LT": 4,
+   "RO": 4,
+   "BG": 4,
+   "GR": 4,
+   "CY": 5,
+   "MT": 5
+  },
+  "zone_costs": {
+   "0": {
+    "base": 4.0,
+    "per_kg": 0.8,
+    "days": [
+     1,
+     3
+    ]
+   },
+   "1": {
+    "base": 9.0,
+    "per_kg": 1.2,
+    "days": [
+     2,
+     5
+    ]
+   },
+   "2": {
+    "base": 14.0,
+    "per_kg": 1.8,
+    "days": [
+     3,
+     7
+    ]
+   },
+   "3": {
+    "base": 18.0,
+    "per_kg": 2.2,
+    "days": [
+     4,
+     9
+    ]
+   },
+   "4": {
+    "base": 26.0,
+    "per_kg": 3.0,
+    "days": [
+     5,
+     12
+    ]
+   },
+   "5": {
+    "base": 34.0,
+    "per_kg": 4.5,
+    "days": [
+     6,
+     15
+    ]
+   }
+  },
+  "strategies": [
+   {
+    "id": "local_pickup",
+    "name": "Buy locally, collect in person",
+    "kind": "none",
+    "tier": 1,
+    "countries": [
+     "PT"
+    ],
+    "max_weight_kg": 999,
+    "bulky_ok": true,
+    "effort": 2,
+    "risk": 2,
+    "confidence": "high",
+    "cost": {
+     "base": 0.0,
+     "per_kg": 0.0
+    },
+    "days": [
+     0,
+     2
+    ],
+    "summary": "Always check this first. A €40 fridge in Braga beats a €25 fridge in Bavaria every single time once you price the movement.",
+    "steps": [
+     "Search OLX.pt and CustoJusto.pt before anything else.",
+     "Meet in a public place; pay on collection after testing the item."
+    ]
+   },
+   {
+    "id": "platform_native",
+    "name": "Platform's own cross-border shipping",
+    "kind": "platform",
+    "tier": 1,
+    "countries": [
+     "ALL"
+    ],
+    "requires_marketplace_native": true,
+    "max_weight_kg": 20,
+    "bulky_ok": false,
+    "effort": 1,
+    "risk": 1,
+    "confidence": "high",
+    "cost": {
+     "base": 5.5,
+     "per_kg": 1.1,
+     "zone_multiplier": 0.8
+    },
+    "days": [
+     3,
+     8
+    ],
+    "summary": "Vinted, eBay International Shipping and OLX Envios handle the label, the customs paperwork (none, inside the EU) and the dispute process themselves. Buyer Protection means a non-delivery is a refund, not a fight.",
+    "steps": [
+     "Filter results to listings whose platform ships to PT (the \"ships to PT\" toggle).",
+     "Pay in-app; never move the conversation off-platform, or protection lapses."
+    ],
+    "providers": [
+     {
+      "name": "Vinted (CTT / DPD / Vinted Go)",
+      "url": "https://www.vinted.pt"
+     },
+     {
+      "name": "eBay International Shipping",
+      "url": "https://www.ebay.de/help/selling/posting-items/international-shipping"
+     },
+     {
+      "name": "OLX Envios (CTT Expresso)",
+      "url": "https://www.olx.pt"
+     }
+    ]
+   },
+   {
+    "id": "prepaid_label",
+    "name": "Send the seller a prepaid label",
+    "kind": "broker",
+    "tier": 1,
+    "countries": [
+     "ALL"
+    ],
+    "max_weight_kg": 30,
+    "bulky_ok": false,
+    "effort": 3,
+    "risk": 3,
+    "confidence": "high",
+    "cost": {
+     "base": 11.0,
+     "per_kg": 1.4
+    },
+    "days": [
+     3,
+     9
+    ],
+    "summary": "The single highest-leverage trick in this whole tool. You buy the cross-border label yourself on a broker, email the seller a PDF or QR code, and they drop the parcel at a shop 300m away. The seller pays nothing, does no paperwork and takes no risk — which is why sellers who \"don't ship abroad\" almost always say yes to this. Brokers resell carrier contracts at 30-60% below counter rates.",
+    "steps": [
+     "Agree the sale and get the parcel's real dimensions and weight from the seller.",
+     "Buy the label on Packlink / Sendcloud / Eurosender for the seller's address → yours.",
+     "Email the PDF label + QR and the nearest drop-off point (link them the map).",
+     "Pay only after you have the tracking number showing \"accepted at drop-off\"."
+    ],
+    "providers": [
+     {
+      "name": "Packlink PRO",
+      "url": "https://pro.packlink.com"
+     },
+     {
+      "name": "Eurosender",
+      "url": "https://www.eurosender.com"
+     },
+     {
+      "name": "Sendcloud",
+      "url": "https://www.sendcloud.com"
+     },
+     {
+      "name": "Parcel ABC / ParcelMonkey",
+      "url": "https://www.parcelabc.com"
+     }
+    ],
+    "caveats": [
+     "Never send the label before the seller has confirmed the sale in writing.",
+     "Insure above €100 of value; broker default cover is usually €25."
+    ]
+   },
+   {
+    "id": "inpost_locker",
+    "name": "InPost locker-to-locker (Poland corridor)",
+    "kind": "carrier",
+    "tier": 1,
+    "countries": [
+     "PL"
+    ],
+    "max_weight_kg": 25,
+    "bulky_ok": false,
+    "effort": 2,
+    "risk": 2,
+    "confidence": "medium",
+    "cost": {
+     "base": 9.5,
+     "per_kg": 0.7
+    },
+    "days": [
+     4,
+     8
+    ],
+    "summary": "Poland is the EU's best-value market for used electronics, tools and photo gear, and it is also the one with the slickest logistics: OLX Przesyłki runs on InPost Paczkomaty, and InPost now operates lockers in Portugal. Seller walks to a locker, you collect from a locker. No one waits in a queue.",
+    "steps": [
+     "Buy via OLX Przesyłki where the listing offers it.",
+     "Otherwise generate an InPost international label and send it to the seller."
+    ],
+    "providers": [
+     {
+      "name": "InPost International",
+      "url": "https://inpost.pt"
+     },
+     {
+      "name": "OLX Przesyłki",
+      "url": "https://www.olx.pl"
+     }
+    ]
+   },
+   {
+    "id": "packeta_pickup",
+    "name": "Packeta / Zásilkovna to a Portuguese pickup point",
+    "kind": "carrier",
+    "tier": 2,
+    "countries": [
+     "CZ",
+     "SK",
+     "HU",
+     "RO",
+     "PL",
+     "AT",
+     "SI",
+     "HR",
+     "BG"
+    ],
+    "max_weight_kg": 10,
+    "bulky_ok": false,
+    "effort": 3,
+    "risk": 2,
+    "confidence": "medium",
+    "cost": {
+     "base": 10.0,
+     "per_kg": 1.0
+    },
+    "days": [
+     5,
+     10
+    ],
+    "summary": "Central Europe's answer to InPost. Bazoš and Jófogás sellers know Packeta the way German sellers know DHL, and Packeta delivers to Portuguese pickup points — so the whole thing stays inside a workflow the seller already uses.",
+    "steps": [
+     "Ask the seller to send \"Packeta / Zásilkovna do zahraničí\" to your PT pickup point.",
+     "Or buy the label yourself on packeta.com and send it over."
+    ],
+    "providers": [
+     {
+      "name": "Packeta",
+      "url": "https://www.packeta.com"
+     }
+    ]
+   },
+   {
+    "id": "border_pickup",
+    "name": "Spanish border pickup (drive across)",
+    "kind": "unconventional",
+    "tier": 1,
+    "countries": [
+     "ES"
+    ],
+    "max_weight_kg": 200,
+    "bulky_ok": true,
+    "effort": 4,
+    "risk": 2,
+    "confidence": "high",
+    "cost": {
+     "base": 6.0,
+     "per_kg": 0.15,
+     "fixed_extra": 25.0
+    },
+    "days": [
+     2,
+     6
+    ],
+    "summary": "Portugal's only land border is with the EU's second-largest second-hand market, and Spanish domestic shipping is both cheap and universally offered. Have the seller ship *domestically* to a Correos office or locker in a border town, then collect by car. For anything bulky — furniture, bikes, appliances — this is dramatically cheaper than international freight, and the \"fixed_extra\" below is roughly a tank of fuel and tolls.",
+    "steps": [
+     "Ask the seller for plain Correos/SEUR domestic shipping (they will not object — it is normal for them).",
+     "Ship to \"Correos Oficina\" list-of-post in Tui (Galicia, ~30min from Valença), Badajoz (~15min from Elvas), Ayamonte (~10min from Vila Real de Santo António), or Vigo/Salamanca for larger depots.",
+     "Collect with passport; Correos holds parcels 15 days."
+    ],
+    "caveats": [
+     "You need a Spanish address line the seller accepts — a Correos office address works.",
+     "Batch several purchases into one trip or the fuel eats the saving."
+    ]
+   },
+   {
+    "id": "forwarder_es",
+    "name": "Spanish forwarding address + consolidation",
+    "kind": "forwarder",
+    "tier": 2,
+    "countries": [
+     "ES"
+    ],
+    "max_weight_kg": 30,
+    "bulky_ok": false,
+    "effort": 3,
+    "risk": 3,
+    "confidence": "medium",
+    "cost": {
+     "base": 14.0,
+     "per_kg": 1.1,
+     "fixed_extra": 5.0
+    },
+    "days": [
+     5,
+     12
+    ],
+    "summary": "Same idea as border pickup without the drive: rent a Spanish address, have several sellers ship domestically to it, then have the forwarder consolidate everything into one box for Portugal. Consolidation is where the money is — four separate €9 domestic parcels become one €18 international one.",
+    "steps": [
+     "Open an account with a Spanish forwarder or a Correos \"Apartado\" box.",
+     "Give sellers the Spanish address; wait for everything to land.",
+     "Request consolidation, then one shipment to PT."
+    ],
+    "providers": [
+     {
+      "name": "Eurosender (address + forwarding)",
+      "url": "https://www.eurosender.com"
+     },
+     {
+      "name": "Correos Apartado Postal",
+      "url": "https://www.correos.es"
+     }
+    ]
+   },
+   {
+    "id": "forwarder_de",
+    "name": "German forwarding address (for DE-only sellers)",
+    "kind": "forwarder",
+    "tier": 2,
+    "countries": [
+     "DE",
+     "AT"
+    ],
+    "max_weight_kg": 30,
+    "bulky_ok": false,
+    "effort": 3,
+    "risk": 3,
+    "confidence": "high",
+    "cost": {
+     "base": 19.0,
+     "per_kg": 1.6,
+     "fixed_extra": 8.0
+    },
+    "days": [
+     6,
+     14
+    ],
+    "summary": "Germany has the deepest pool of used goods in Europe and the most rigid \"Versand nur innerhalb Deutschlands\" culture. A German forwarding address dissolves that entirely: the seller posts a normal domestic DHL parcel, the forwarder inspects it (worth paying for on Kleinanzeigen buys) and reships to Portugal.",
+    "steps": [
+     "Register with a German forwarder and get your personal DE address.",
+     "Buy as a domestic German buyer; pay the seller by SEPA transfer.",
+     "Request photos/inspection on arrival before paying for the onward leg."
+    ],
+    "providers": [
+     {
+      "name": "myGermany",
+      "url": "https://mygermany.com"
+     },
+     {
+      "name": "Meest",
+      "url": "https://meest.de"
+     },
+     {
+      "name": "ShipTo / Forward2me DE",
+      "url": "https://www.forward2me.com"
+     }
+    ],
+    "caveats": [
+     "Forwarders charge storage after ~30 days; consolidate promptly."
+    ]
+   },
+   {
+    "id": "diaspora_van",
+    "name": "Portuguese diaspora van (carrinha de emigrantes)",
+    "kind": "unconventional",
+    "tier": 1,
+    "countries": [
+     "FR",
+     "LU",
+     "CH",
+     "DE",
+     "BE",
+     "NL",
+     "AD"
+    ],
+    "max_weight_kg": 500,
+    "bulky_ok": true,
+    "effort": 5,
+    "risk": 4,
+    "confidence": "medium",
+    "cost": {
+     "base": 25.0,
+     "per_kg": 0.35
+    },
+    "days": [
+     7,
+     21
+    ],
+    "summary": "The genuinely unconventional one, and for heavy or bulky goods from France, Luxembourg, Switzerland or Germany it beats every courier by a wide margin. Dozens of small Portuguese transport firms run weekly vans along the emigration corridors, door to door, priced by volume rather than by chargeable weight. They will happily take a washing machine, a motorbike fairing or six boxes of books. France is by far the densest corridor.",
+    "steps": [
+     "Search \"transporte de encomendas França Portugal\" or \"carrinhas para Portugal\" plus your region; most operators live on Facebook groups rather than websites.",
+     "Agree pickup at the seller's address and delivery to yours; confirm the week's run.",
+     "Pay part on pickup, remainder on delivery. Get the driver's phone number and plate."
+    ],
+    "caveats": [
+     "Informal sector — no tracking, no insurance, schedules slip by days.",
+     "Only use an operator with a real trading history and reviews you can read.",
+     "Never for high-value electronics; ideal for bulky, low-value-density goods."
+    ]
+   },
+   {
+    "id": "coach_freight",
+    "name": "Coach and bus parcel service",
+    "kind": "unconventional",
+    "tier": 2,
+    "countries": [
+     "ES",
+     "FR"
+    ],
+    "max_weight_kg": 40,
+    "bulky_ok": true,
+    "effort": 4,
+    "risk": 3,
+    "confidence": "medium",
+    "cost": {
+     "base": 18.0,
+     "per_kg": 0.5
+    },
+    "days": [
+     2,
+     6
+    ],
+    "summary": "Long-distance coach operators sell hold space as parcel freight, station to station. Cheap, fast for the Iberian corridor, and takes odd-shaped items couriers refuse. You collect from the bus station.",
+    "steps": [
+     "Ask the seller to drop the parcel at their local coach station office.",
+     "Collect at Lisboa Sete Rios, Porto Campanhã or your regional terminal."
+    ],
+    "providers": [
+     {
+      "name": "ALSA Paquetería",
+      "url": "https://www.alsa.es"
+     },
+     {
+      "name": "Rede Expressos",
+      "url": "https://www.rede-expressos.pt"
+     }
+    ]
+   },
+   {
+    "id": "pallet_freight",
+    "name": "Palletised road freight",
+    "kind": "freight",
+    "tier": 3,
+    "countries": [
+     "ALL"
+    ],
+    "min_weight_kg": 30,
+    "max_weight_kg": 800,
+    "bulky_ok": true,
+    "effort": 4,
+    "risk": 3,
+    "confidence": "high",
+    "cost": {
+     "base": 95.0,
+     "per_kg": 0.18
+    },
+    "days": [
+     5,
+     14
+    ],
+    "summary": "For furniture, machine tools, engines and anything a parcel carrier will refuse. A half-pallet from Germany to Portugal is €120-200 — absurd for a €60 chair, excellent for a €900 lathe or a set of Vitra chairs.",
+    "steps": [
+     "Get exact dimensions and weight; have the seller palletise and wrap it.",
+     "Book through a freight broker; specify a tail-lift if there is no loading dock."
+    ],
+    "providers": [
+     {
+      "name": "Palletways",
+      "url": "https://www.palletways.com"
+     },
+     {
+      "name": "Eurosender freight",
+      "url": "https://www.eurosender.com"
+     },
+     {
+      "name": "Raben / Dachser",
+      "url": "https://www.raben-group.com"
+     }
+    ]
+   },
+   {
+    "id": "crowdshipping",
+    "name": "Traveller crowdshipping",
+    "kind": "unconventional",
+    "tier": 3,
+    "countries": [
+     "ALL"
+    ],
+    "max_weight_kg": 15,
+    "bulky_ok": false,
+    "effort": 5,
+    "risk": 4,
+    "confidence": "low",
+    "cost": {
+     "base": 20.0,
+     "per_kg": 1.5
+    },
+    "days": [
+     3,
+     30
+    ],
+    "summary": "Platforms that match your parcel with a traveller already making the trip. Realistically a niche play: matching is slow and depends entirely on someone happening to fly your route. Worth a try for small, high-value, hard-to-ship items — and for anything a courier would classify as dangerous goods (lithium batteries, aerosols, some tools).",
+    "steps": [
+     "Post the route and wait for a carrier match; verify their ID and reviews.",
+     "Use the platform's escrow. Never pay a carrier directly."
+    ],
+    "providers": [
+     {
+      "name": "Worldcraze",
+      "url": "https://www.worldcraze.com"
+     },
+     {
+      "name": "PiggyBee",
+      "url": "https://www.piggybee.com"
+     },
+     {
+      "name": "Grabr",
+      "url": "https://grabr.io"
+     }
+    ],
+    "caveats": [
+     "You are trusting a stranger with the goods; keep value low."
+    ]
+   },
+   {
+    "id": "hand_carry",
+    "name": "Hand-carry on a flight",
+    "kind": "unconventional",
+    "tier": 2,
+    "countries": [
+     "ALL"
+    ],
+    "max_weight_kg": 23,
+    "bulky_ok": false,
+    "effort": 5,
+    "risk": 2,
+    "confidence": "high",
+    "cost": {
+     "base": 45.0,
+     "per_kg": 0.0
+    },
+    "days": [
+     1,
+     45
+    ],
+    "summary": "A 23kg hold bag on a Ryanair or easyJet leg into Lisboa or Porto costs €40-60 flat and has no per-kilo penalty at all. If you, a friend or a family member is already flying that route, it is the cheapest way to move anything dense and valuable — camera gear, lenses, tools, vinyl. Ship the item to their local address first via cheap domestic post.",
+    "steps": [
+     "Have the seller ship domestically to your contact in-country.",
+     "Add a hold bag to their existing booking.",
+     "Keep lithium batteries in the cabin, not the hold — airline rules, not a suggestion."
+    ]
+   },
+   {
+    "id": "proxy_buyer",
+    "name": "In-country proxy buyer / inspection",
+    "kind": "unconventional",
+    "overlay": true,
+    "tier": 3,
+    "countries": [
+     "ALL"
+    ],
+    "max_weight_kg": 30,
+    "bulky_ok": true,
+    "effort": 5,
+    "risk": 2,
+    "confidence": "medium",
+    "cost": {
+     "base": 25.0,
+     "per_kg": 1.2,
+     "fixed_extra": 15.0
+    },
+    "days": [
+     5,
+     15
+    ],
+    "summary": "For high-value buys on platforms with no buyer protection — Kleinanzeigen, Bazoš, SS.lv — the real risk is not shipping, it is that the item is not what the photos claim. Someone local who can meet the seller, test the item and pay cash converts a stranger-danger transaction into a normal one, then reships domestically. Costs a favour or a small fee; saves entire purchases.",
+    "steps": [
+     "Find a local contact, an expat forum member, or a paid inspection service.",
+     "They meet, test, pay cash, then ship domestically or via prepaid label."
+    ],
+    "caveats": [
+     "Only worth the coordination above roughly €300 of item value."
+    ]
+   }
+  ],
+  "weight_hints": [
+   [
+    "\\b(sofa|couch|sofá|wardrobe|armário|schrank|kast|divano|mesa|table|desk|bed|cama|bett)\\b",
+    45.0,
+    true
+   ],
+   [
+    "\\b(fridge|frigorific|geladeira|kühlschrank|washing machine|máquina de lavar|waschmaschine|lavadora)\\b",
+    65.0,
+    true
+   ],
+   [
+    "\\b(bicicleta|bike|bicycle|fahrrad|vélo|bici|e-bike|mtb|gravel|roadbike)\\b",
+    15.0,
+    true
+   ],
+   [
+    "\\b(chair|cadeira|stuhl|stoel|silla|sedia|armchair|cadeirão)\\b",
+    12.0,
+    true
+   ],
+   [
+    "\\b(piano|drum kit|bateria acústica|amplifier|amplificador|cabinet)\\b",
+    40.0,
+    true
+   ],
+   [
+    "\\b(tv|televis|monitor|ecrã|bildschirm)\\b",
+    12.0,
+    true
+   ],
+   [
+    "\\b(lathe|torno|mill|fresadora|generator|gerador|compressor|engine|motor)\\b",
+    90.0,
+    true
+   ],
+   [
+    "\\b(laptop|macbook|notebook|portátil|thinkpad)\\b",
+    3.5,
+    false
+   ],
+   [
+    "\\b(desktop|pc tower|workstation|gpu|graphics card|placa gráfica)\\b",
+    8.0,
+    false
+   ],
+   [
+    "\\b(camera|câmara|kamera|dslr|mirrorless|nikon|canon|sony a7|fuji|leica|lens|objetiva|objektiv)\\b",
+    2.0,
+    false
+   ],
+   [
+    "\\b(turntable|gira-discos|plattenspieler|receiver|speaker|coluna|lautsprecher)\\b",
+    10.0,
+    true
+   ],
+   [
+    "\\b(vinyl|lp|record|disco de vinil|schallplatte|book|livro|buch)\\b",
+    1.2,
+    false
+   ],
+   [
+    "\\b(iphone|samsung|pixel|smartphone|telemóvel|handy|tablet|ipad)\\b",
+    0.6,
+    false
+   ],
+   [
+    "\\b(lego|puzzle|boardgame|jogo de tabuleiro|console|playstation|xbox|nintendo)\\b",
+    2.5,
+    false
+   ],
+   [
+    "\\b(watch|relógio|uhr|jewel|jóia|ring|anel)\\b",
+    0.3,
+    false
+   ],
+   [
+    "\\b(jacket|casaco|dress|vestido|shoes|sapatos|schuhe|bag|mala|clothes|roupa|sneaker)\\b",
+    1.0,
+    false
+   ],
+   [
+    "\\b(drill|berbequim|bohrmaschine|tool|ferramenta|werkzeug|saw|serra)\\b",
+    5.0,
+    false
+   ],
+   [
+    "\\b(stroller|carrinho de bebé|kinderwagen|cot|berço)\\b",
+    12.0,
+    true
+   ]
+  ],
+  "default_weight_kg": 2.5
+ }
+}

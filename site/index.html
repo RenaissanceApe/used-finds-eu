@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>used-finds-eu — search Europe's second-hand markets</title>
+<meta name="description" content="One query across the leading second-hand marketplace in every EU country, with shipping routes to Portugal.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛒</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">🛒</span>
+    <div>
+      <h1>used-finds-eu</h1>
+      <p class="tagline">One query across the leading second-hand marketplace in every EU country — priced to your door in Portugal.</p>
+    </div>
+  </div>
+  <div class="health" id="health"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="launch" role="tab">Search</button>
+  <button class="tab" data-tab="shipping" role="tab">Shipping to PT</button>
+  <button class="tab" data-tab="markets" role="tab">Marketplaces</button>
+  <button class="tab" data-tab="live" role="tab">Live results</button>
+</nav>
+
+<!-- ─────────────────────────── Search launcher ─────────────────────────── -->
+<section class="panel active" id="tab-launch">
+  <form class="searchbar" id="launch-form">
+    <input type="search" id="q" placeholder="What are you looking for?  e.g. Nikon D750, Eames chair, Thermomix TM6" autocomplete="off" required>
+    <button type="submit">Build links</button>
+  </form>
+
+  <div class="controls">
+    <label class="check"><input type="checkbox" id="only-top" checked> Top pick per country only</label>
+    <label class="check"><input type="checkbox" id="only-ships"> Only sites that ship to PT</label>
+    <label>Focus
+      <select id="focus">
+        <option value="">anything</option>
+        <option value="general">general goods</option>
+        <option value="fashion">fashion</option>
+        <option value="electronics">electronics</option>
+        <option value="furniture">furniture</option>
+        <option value="vehicles">vehicles</option>
+        <option value="collectibles">collectibles</option>
+      </select>
+    </label>
+    <button type="button" class="ghost" id="open-top">Open top 8 in tabs</button>
+    <span class="hint" id="launch-count"></span>
+  </div>
+
+  <div class="notice compact" id="static-note">
+    <strong>This hosted page is static, so it links rather than aggregates.</strong>
+    <p>
+      GitHub Pages serves files, not servers — so this build folds your query into
+      each marketplace's own search URL and hands you the links, grouped by country
+      and ranked by how much locals actually use each site. The
+      <a href="#" data-goto="shipping">shipping calculator</a> and the
+      <a href="#" data-goto="markets">catalogue</a> are fully functional here.
+      For the real thing — one merged, de-duplicated, EUR-normalised result list
+      sorted by landed cost — run the backend and point the
+      <a href="#" data-goto="live">Live results</a> tab at it. Two commands, in the README.
+    </p>
+  </div>
+
+  <div id="launch-results"></div>
+</section>
+
+<!-- ───────────────────────────── Shipping ──────────────────────────────── -->
+<section class="panel" id="tab-shipping">
+  <p class="lede">
+    Where the item is, and roughly what it is. Routes are ranked by cost <em>plus</em>
+    how much of your Saturday they consume — the cheapest option is often not the
+    one you want. Runs entirely in your browser.
+  </p>
+  <form class="shipbar" id="ship-form">
+    <label>From<select id="ship-country"></select></label>
+    <label>Item<input id="ship-item" placeholder="e.g. washing machine, camera lens, sofa"></label>
+    <label>Price €<input type="number" id="ship-price" min="0" step="10" placeholder="optional"></label>
+    <label>Weight kg<input type="number" id="ship-weight" min="0" step="0.5" placeholder="auto"></label>
+    <button type="submit">Show routes</button>
+  </form>
+  <div id="ship-results"></div>
+</section>
+
+<!-- ──────────────────────────── Marketplaces ───────────────────────────── -->
+<section class="panel" id="tab-markets">
+  <p class="lede">
+    The leading second-hand platform in each of the 27 EU member states, plus the
+    pan-European players. <strong>Rank 1</strong> is what locals reach for first.
+    <em>Confidence</em> is how sure the research is — medium and low entries are
+    worth re-checking before you trust them.
+  </p>
+  <div class="controls">
+    <input type="search" id="market-filter" placeholder="Filter by country, site or category…">
+  </div>
+  <div id="markets"></div>
+</section>
+
+<!-- ───────────────────────────── Live mode ─────────────────────────────── -->
+<section class="panel" id="tab-live">
+  <div class="notice">
+    <strong>Point this page at a running backend for real aggregated results.</strong>
+    <p>
+      The Python service does the part a static page cannot: query ~31 marketplaces
+      in parallel, convert six currencies to EUR, drop duplicates, and sort by what
+      the item costs <em>delivered to Portugal</em>. Run it locally —
+      <code>pip install -r backend/requirements.txt &amp;&amp; cd backend &amp;&amp; python -m ufeu.cli serve</code>
+      — then paste <code>http://127.0.0.1:8000</code> below. The URL is remembered in
+      this browser only; nothing is sent anywhere else.
+    </p>
+  </div>
+  <form class="shipbar" id="live-form">
+    <label>Backend URL<input id="api-url" placeholder="http://127.0.0.1:8000" size="34"></label>
+    <label>Search<input id="live-q" placeholder="nikon d750"></label>
+    <label>Sort
+      <select id="live-sort">
+        <option value="landed_asc">Cheapest delivered to PT</option>
+        <option value="relevance">Best match</option>
+        <option value="price_asc">Lowest price</option>
+        <option value="newest">Newest</option>
+      </select>
+    </label>
+    <button type="submit">Search</button>
+  </form>
+  <div class="stats" id="live-stats"></div>
+  <div class="results" id="live-results"></div>
+  <div class="market-status" id="live-status"></div>
+</section>
+
+<footer class="foot">
+  <span id="foot-meta"></span>
+  <a href="https://github.com/RenaissanceApe/used-finds-eu" target="_blank" rel="noopener noreferrer">source on GitHub ↗</a>
+</footer>
+
+<div class="drawer-backdrop hidden" id="drawer-backdrop"></div>
+<aside class="drawer hidden" id="drawer">
+  <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+  <div id="drawer-body"></div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>

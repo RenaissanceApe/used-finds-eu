@@ -55,6 +55,10 @@ def _extract(node, spec: dict[str, Any] | None) -> str | None:
 class HtmlEngine(BaseEngine):
     name = "html"
 
+    @property
+    def query_encoding(self) -> str:
+        return "slug" if self.config.get("slugify_query") else "component"
+
     async def search(self, query: SearchQuery) -> list[Listing]:
         rps = float(self.config.get("rate_limit_rps") or 0)
         if rps:

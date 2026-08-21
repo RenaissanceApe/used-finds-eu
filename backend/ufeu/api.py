@@ -16,7 +16,7 @@ from .adapters import demo_mode
 from .catalog import load_catalog
 from .models import SearchQuery, SearchResponse
 from .orchestrator import search as run_search
-from .settings import FRONTEND_DIR, HOME_COUNTRY
+from .settings import ALLOWED_ORIGINS, FRONTEND_DIR, HOME_COUNTRY
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -27,7 +27,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

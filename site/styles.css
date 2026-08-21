@@ -237,3 +237,48 @@ button.ghost { background: var(--surface); color: var(--text); border-color: var
 .empty { color: var(--muted); padding: 2rem 0; text-align: center; }
 .spinner { display: inline-block; width: .8rem; height: .8rem; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -1px; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── static-site additions ─────────────────────────────────────────────── */
+.hint { color: var(--muted); font-size: .82rem; }
+.notice.compact { padding: .7rem .9rem; margin: .2rem 0 1.1rem; font-size: .9rem; }
+.notice.compact p { font-size: .84rem; }
+.notice a { color: var(--accent); }
+
+.launch-country { margin-bottom: 1.1rem; }
+.launch-country h2 {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); margin-bottom: .45rem;
+  display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap;
+}
+.launch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .5rem; }
+.launch-card {
+  display: block; text-decoration: none; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .6rem .75rem; transition: border-color .12s, transform .12s;
+}
+.launch-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.launch-card .row { display: flex; gap: .45rem; align-items: baseline; flex-wrap: wrap; }
+.launch-card .site { font-weight: 600; font-size: .92rem; }
+.launch-card .go { margin-left: auto; color: var(--accent); font-size: .8rem; font-weight: 600; }
+.launch-card .sub-row {
+  display: flex; gap: .4rem; align-items: baseline; justify-content: space-between;
+  color: var(--muted); font-size: .78rem; margin-top: .15rem;
+}
+.launch-card .why {
+  color: var(--muted); font-size: .8rem; margin: .3rem 0 0; line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rank1 { border-left: 3px solid var(--accent); }
+
+#market-filter {
+  width: min(420px, 100%); padding: .5rem .7rem; font: inherit; font-size: .9rem;
+  color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+
+.foot {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem); border-top: 1px solid var(--border);
+  color: var(--muted); font-size: .8rem; background: var(--surface);
+}
+.foot a { color: var(--muted); }

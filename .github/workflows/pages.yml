@@ -1,0 +1,66 @@
+# Publish the static build to GitHub Pages.
+#
+# Two things must be true in repo Settings before this can run:
+#   1. The repository is public (Pages on a private repo needs a paid plan).
+#   2. Settings → Pages → Build and deployment → Source = "GitHub Actions".
+#
+# site/data.json is regenerated here from backend/ufeu/data/*.yaml, so the
+# published catalogue can never drift from the one the app actually searches.
+
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main, claude/eu-secondhand-aggregator-zxyqmg]
+    paths:
+      - site/**
+      - backend/ufeu/data/**
+      - backend/ufeu/adapters/**
+      - scripts/build_static_site.py
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend deps
+        run: pip install -r backend/requirements.txt
+
+      - name: Rebuild site data from the catalogue
+        run: python scripts/build_static_site.py
+
+      - name: Check the catalogue is still coherent
+        run: pip install pytest pytest-asyncio respx && cd backend && pytest -q tests/test_catalog.py tests/test_shipping.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

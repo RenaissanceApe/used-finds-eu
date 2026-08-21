@@ -11,6 +11,22 @@ out of Paris.
 
 ![search](docs/img/ui-search.png)
 
+## Live site
+
+**<https://renaissanceape.github.io/used-finds-eu/>** — once Pages is switched on
+(two settings: the repo must be public, and Pages source set to GitHub Actions;
+see [docs/05-hosting.md](docs/05-hosting.md)).
+
+The hosted build is static, so it does what a browser can do without a server:
+the full marketplace catalogue, the complete shipping-to-Portugal calculator,
+and a **search launcher** that folds your query into every marketplace's own
+search URL, grouped by country and ranked by local usage. The aggregated,
+de-duplicated, landed-cost-sorted result list needs the Python backend — the
+page's *Live results* tab points at one when you have it running.
+
+`site/standalone.html` is the same thing in a single 110 KB file. Double-click
+it; it works offline.
+
 ## Quickstart
 
 ```bash
@@ -108,8 +124,10 @@ backend/ufeu/            the application
   adapters/              6 search engines
 backend/tests/           112 tests, all offline against recorded fixtures
 frontend/                index.html + app.js + styles.css, no build step
-docs/                    the four write-ups
-scripts/verify_catalog.py  monthly health check — one probe per marketplace
+site/                    the static GitHub Pages build (generated)
+docs/                    the five write-ups
+scripts/verify_catalog.py      monthly health check — one probe per marketplace
+scripts/build_static_site.py   regenerates site/ from the catalogue
 ```
 
 ## Maintenance

@@ -310,7 +310,7 @@ marketplaces:
     default_enabled: true
     confidence: high
     why: OLX is the leading general classifieds platform in Bulgaria; Bazar.bg is the local challenger.
-    engine_config: {base_url: "https://www.olx.bg", currency: BGN}
+    engine_config: {base_url: "https://www.olx.bg", search_path: "/ads/", currency: BGN}
     account: {required_for_search: false, kind: session, signup_url: "https://www.olx.bg/account/", signup_method: [email, phone], captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "Econt/Speedy domestic only; needs forwarder or prepaid label."}
 
@@ -867,7 +867,7 @@ marketplaces:
     why: >-
       Poland's #1 classifieds platform. Poland is the best-value EU market for
       used electronics and tools, and OLX's InPost integration makes logistics easy.
-    engine_config: {base_url: "https://www.olx.pl", currency: PLN}
+    engine_config: {base_url: "https://www.olx.pl", search_path: "/oferty/", currency: PLN}
     account:
       required_for_search: false
       kind: session
@@ -911,7 +911,7 @@ marketplaces:
       Portugal's #1 general classifieds site, and your home market — no shipping
       problem to solve at all. Always search this first: if the item exists
       locally at a sane price, every other row in the results is noise.
-    engine_config: {base_url: "https://www.olx.pt", currency: EUR}
+    engine_config: {base_url: "https://www.olx.pt", search_path: "/ads/", currency: EUR}
     account:
       required_for_search: false
       kind: session
@@ -955,7 +955,7 @@ marketplaces:
     default_enabled: true
     confidence: high
     why: Romania's dominant classifieds platform by a wide margin; Publi24 is a distant second.
-    engine_config: {base_url: "https://www.olx.ro", currency: RON}
+    engine_config: {base_url: "https://www.olx.ro", search_path: "/oferte/", currency: RON}
     account: {required_for_search: false, kind: session, signup_url: "https://www.olx.ro/cont/", signup_method: [email, phone], captcha: true, automatable: false}
     shipping: {native_to_pt: false, notes: "Sameday/Cargus domestic. Prepaid label works; 6-10 days to PT."}
 

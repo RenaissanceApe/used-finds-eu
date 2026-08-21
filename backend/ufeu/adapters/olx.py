@@ -22,6 +22,7 @@ def _param(offer: dict[str, Any], key: str) -> dict[str, Any] | None:
 
 class OlxEngine(BaseEngine):
     name = "olx"
+    query_encoding = "dash"
 
     @property
     def base_url(self) -> str:
@@ -30,7 +31,9 @@ class OlxEngine(BaseEngine):
     def build_search_url(self, query: SearchQuery) -> str:
         from urllib.parse import quote
 
-        return f"{self.base_url}/ofertas/q-{quote(query.q.replace(' ', '-'))}/"
+        # Each national domain uses its own word for "listings" in the path.
+        path = self.config.get("search_path", "/ads/")
+        return f"{self.base_url}{path}q-{quote(query.q.replace(' ', '-'))}/"
 
     async def search(self, query: SearchQuery) -> list[Listing]:
         params: dict[str, str] = {
