@@ -33,6 +33,12 @@ class NeedsAuth(EngineError):
 class BaseEngine(abc.ABC):
     name: str = "base"
 
+    #: How the search term is encoded into ``search_url``. Read by
+    #: scripts/build_static_site.py so the static build can produce identical
+    #: links in the browser instead of duplicating this logic in JS.
+    #: "component" = percent-encoded · "slug" = nikon-d750 · "dash" = nikon-d750 unencoded
+    query_encoding: str = "component"
+
     def __init__(self, market: Marketplace, client: httpx.AsyncClient, credentials: dict[str, Any] | None = None):
         self.market = market
         self.client = client
