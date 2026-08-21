@@ -1,0 +1,1652 @@
+# EU second-hand marketplace catalog
+#
+# Deliverable (a): the leading national "sell your used stuff" platform(s) for
+# every EU-27 member state, plus the pan-EU players.
+#
+# Every entry carries the config the search engines need, so this file is both
+# documentation and the runtime registry. Adding a marketplace = editing YAML.
+#
+# Field notes
+#   rank            1 = the platform locals actually use first. 2+ = strong alternates.
+#   engine          which search engine drives it (see ufeu/adapters/).
+#                   `manual` means no automated search is offered: the app emits a
+#                   deep search link instead. Honest > fake.
+#   confidence      how sure we are about the "most used" claim (high/medium/low).
+#   account         what it takes to register (deliverable (b)).
+#   shipping        how goods get to Portugal (deliverable (f)).
+#
+# Rankings are a best-effort snapshot for 2026 from public traffic/MAU reporting;
+# re-check before betting money on them. `scripts/verify_catalog.py` re-probes
+# reachability and search shape.
+
+version: 1
+updated: "2026-08-21"
+
+countries:
+  AT: {name: Austria,        currency: EUR, lang: de}
+  BE: {name: Belgium,        currency: EUR, lang: nl}
+  BG: {name: Bulgaria,       currency: BGN, lang: bg}
+  HR: {name: Croatia,        currency: EUR, lang: hr}
+  CY: {name: Cyprus,         currency: EUR, lang: el}
+  CZ: {name: Czechia,        currency: CZK, lang: cs}
+  DK: {name: Denmark,        currency: DKK, lang: da}
+  EE: {name: Estonia,        currency: EUR, lang: et}
+  FI: {name: Finland,        currency: EUR, lang: fi}
+  FR: {name: France,         currency: EUR, lang: fr}
+  DE: {name: Germany,        currency: EUR, lang: de}
+  GR: {name: Greece,         currency: EUR, lang: el}
+  HU: {name: Hungary,        currency: HUF, lang: hu}
+  IE: {name: Ireland,        currency: EUR, lang: en}
+  IT: {name: Italy,          currency: EUR, lang: it}
+  LV: {name: Latvia,         currency: EUR, lang: lv}
+  LT: {name: Lithuania,      currency: EUR, lang: lt}
+  LU: {name: Luxembourg,     currency: EUR, lang: fr}
+  MT: {name: Malta,          currency: EUR, lang: en}
+  NL: {name: Netherlands,    currency: EUR, lang: nl}
+  PL: {name: Poland,         currency: PLN, lang: pl}
+  PT: {name: Portugal,       currency: EUR, lang: pt}
+  RO: {name: Romania,        currency: RON, lang: ro}
+  SK: {name: Slovakia,       currency: EUR, lang: sk}
+  SI: {name: Slovenia,       currency: EUR, lang: sl}
+  ES: {name: Spain,          currency: EUR, lang: es}
+  SE: {name: Sweden,         currency: SEK, lang: sv}
+  EU: {name: Pan-European,   currency: EUR, lang: en}
+
+marketplaces:
+
+  # ───────────────────────── Pan-European ─────────────────────────
+
+  - id: ebay
+    name: eBay (EU sites)
+    country: EU
+    rank: 1
+    scope: pan_eu
+    site: https://www.ebay.de
+    focus: [general, electronics, collectibles, parts]
+    engine: ebay_browse
+    default_enabled: true
+    confidence: high
+    why: >-
+      The only large EU marketplace with a first-class, documented, free public
+      search API. Nine EU sites (DE/FR/IT/ES/IE/NL/AT/BE/PL) behind one call, and
+      "used" is a real filter rather than a guess. Start here.
+    engine_config:
+      auth_url: https://api.ebay.com/identity/v1/oauth2/token
+      search_url: https://api.ebay.com/buy/browse/v1/item_summary/search
+      scope: https://api.ebay.com/oauth/api_scope
+      marketplaces: [EBAY_DE, EBAY_FR, EBAY_IT, EBAY_ES, EBAY_IE, EBAY_NL, EBAY_AT, EBAY_BE, EBAY_PL]
+      condition_ids: ["3000", "4000", "5000", "6000", "7000"]
+      limit: 50
+    account:
+      required_for_search: true
+      kind: api_key
+      signup_url: https://developer.ebay.com/my/keys
+      credentials: [client_id, client_secret]
+      automatable: true
+      notes: >-
+        Free developer account, self-service. Create a production keyset, then
+        `ufeu accounts set ebay --client-id ... --client-secret ...`. No scraping,
+        no ToS grey zone, ~5000 calls/day on the default tier.
+    shipping:
+      native_to_pt: true
+      notes: eBay International Shipping / seller-declared EU shipping. Filter by "ships to PT" in the UI.
+
+  - id: vinted
+    name: Vinted (EU pool)
+    country: EU
+    rank: 1
+    scope: pan_eu
+    site: https://www.vinted.pt
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: true
+    dedupe_group: vinted
+    confidence: high
+    why: >-
+      #1 second-hand app by MAU in FR/PT/ES/IT/LT and top-3 in most of the rest of
+      the EU. Crucially, Vinted runs *connected country pools*: one query against
+      vinted.pt already returns sellers across the Iberian/EU pool, so a single
+      endpoint covers most of Europe. The per-country entries below exist for
+      catalogue completeness and are disabled by default to avoid duplicate hits.
+    engine_config:
+      base_url: https://www.vinted.pt
+      per_page: 48
+      order: newest_first
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.pt/member/signup
+      signup_method: [email, google, facebook, apple]
+      captcha: true
+      automatable: false
+      notes: >-
+        Search works anonymously (the engine bootstraps an anonymous session
+        cookie). An account is only needed to message sellers and buy. Sign up
+        by hand once, then import the session cookie via the Accounts tab.
+    shipping:
+      native_to_pt: true
+      notes: >-
+        Best-in-class. Vinted's integrated shipping covers PT natively (CTT,
+        DPD, Vinted Go lockers) and cross-border inside the connected pool, with
+        Buyer Protection. This is the single easiest route for goods into Portugal.
+
+  - id: catawiki
+    name: Catawiki
+    country: EU
+    rank: 2
+    scope: pan_eu
+    site: https://www.catawiki.com
+    focus: [collectibles, art, watches, vintage]
+    engine: html
+    default_enabled: false
+    confidence: high
+    why: Pan-EU curated auction house for used collectibles; NL-based, ships EU-wide.
+    engine_config:
+      search_url: "https://www.catawiki.com/en/search?q={q}"
+      item: "div[data-testid='lot-card']"
+      fields:
+        title: {sel: "h3", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: "[data-testid='lot-card-bid']", attr: text}
+        image: {sel: "img", attr: src}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.catawiki.com/en/register
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Sellers quote shipping to PT at checkout.
+
+  - id: vestiaire
+    name: Vestiaire Collective
+    country: EU
+    rank: 3
+    scope: pan_eu
+    site: https://www.vestiairecollective.com
+    focus: [luxury_fashion]
+    engine: html
+    default_enabled: false
+    confidence: high
+    why: The pan-EU platform for pre-owned designer fashion; authenticates items.
+    engine_config:
+      search_url: "https://www.vestiairecollective.com/search/?q={q}"
+      item: "div[data-cy='productCard']"
+      fields:
+        title: {sel: "[data-cy='productCard_brand']", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: "[data-cy='productCard_price']", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.vestiairecollective.com/register/", automatable: false}
+    shipping: {native_to_pt: true, notes: Centralised authentication hub then onward shipping to PT.}
+
+  - id: backmarket
+    name: Back Market
+    country: EU
+    rank: 3
+    scope: pan_eu
+    site: https://www.backmarket.pt
+    focus: [electronics_refurbished]
+    engine: html
+    default_enabled: false
+    confidence: high
+    why: >-
+      Not peer-to-peer, but the reference EU marketplace for refurbished
+      electronics with a Portuguese storefront and warranty. Worth having in the
+      comparison when the query is a phone/laptop.
+    engine_config:
+      search_url: "https://www.backmarket.pt/pt-pt/search?q={q}"
+      item: "article"
+      fields:
+        title: {sel: "h2", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: "[data-qa='productCardPrice']", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: none, automatable: true}
+    shipping: {native_to_pt: true, notes: Ships to PT domestically, free over threshold.}
+
+  - id: facebook_marketplace
+    name: Facebook Marketplace
+    country: EU
+    rank: 2
+    scope: pan_eu
+    site: https://www.facebook.com/marketplace
+    focus: [general, furniture, local]
+    engine: manual
+    default_enabled: true
+    confidence: high
+    why: >-
+      By raw volume this is the biggest second-hand venue in most EU countries,
+      especially for furniture and local pickup. But it is strictly local-radius,
+      has no public API, and automated access is an explicit ToS violation that
+      gets accounts banned. Included as a deep link only — the app builds the
+      search URL, you click it.
+    engine_config:
+      search_url: "https://www.facebook.com/marketplace/search/?query={q}"
+    account:
+      required_for_search: true
+      kind: session
+      automatable: false
+      notes: Use your existing personal account. Do not automate this one.
+    shipping:
+      native_to_pt: false
+      notes: Local pickup culture; cross-border almost always needs a private arrangement.
+
+  # ───────────────────────── National #1s ─────────────────────────
+
+  - id: willhaben_at
+    name: willhaben.at
+    country: AT
+    rank: 1
+    scope: national
+    site: https://www.willhaben.at
+    focus: [general, furniture, electronics, vehicles]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: Austria's dominant classifieds site — the local Kleinanzeigen, ~4M+ monthly users in a 9M country.
+    engine_config:
+      mode: next_data
+      search_url: "https://www.willhaben.at/iad/kaufen-und-verkaufen/marktplatz?keyword={q}"
+      root: "props.pageProps.searchResult.advertSummaryList.advertSummary"
+      fields:
+        id: id
+        title: description
+        url: "contextLinkList.contextLink[?id=='iadShareLink'].uri | [0]"
+        attrs: "attributes.attribute"
+      attr_map: {price: PRICE, image: "IMAGE/1", location: LOCATION, postcode: POSTCODE}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.willhaben.at/iad/registrieren
+      signup_method: [email]
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: false
+      notes: >-
+        willhaben has "Kaufabwicklung" with paid shipping, but Austrian sellers
+        rarely ship outside AT/DE. Route via a DE/AT forwarder or ask the seller
+        to accept a prepaid label you generate (see shipping strategy `prepaid_label`).
+
+  - id: tweedehands_be
+    name: 2dehands.be / 2ememain.be
+    country: BE
+    rank: 1
+    scope: national
+    site: https://www.2dehands.be
+    focus: [general, furniture, electronics]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: The Belgian arm of the Marktplaats (Adevinta) stack and the country's #1 general classifieds site.
+    engine_config:
+      mode: rest
+      search_url: "https://www.2dehands.be/lrp/api/search?query={q}&limit={limit}&offset=0"
+      root: listings
+      price_divisor: 100        # the API quotes cents
+      fields:
+        id: itemId
+        title: title
+        url: vipUrl
+        price: "priceInfo.priceCents"
+        image: "pictures[0].largeUrl"
+        location: "location.cityName"
+        seller: "sellerInformation.sellerName"
+        posted: date
+    account: {required_for_search: false, kind: session, signup_url: "https://www.2dehands.be/identity/v2/registration", captcha: true, automatable: false}
+    shipping:
+      native_to_pt: false
+      notes: Native shipping only within BE/NL. Cross-border needs a prepaid label or forwarder.
+
+  - id: olx_bg
+    name: OLX.bg
+    country: BG
+    rank: 1
+    scope: national
+    site: https://www.olx.bg
+    focus: [general, electronics, vehicles]
+    engine: olx
+    default_enabled: true
+    confidence: high
+    why: OLX is the leading general classifieds platform in Bulgaria; Bazar.bg is the local challenger.
+    engine_config: {base_url: "https://www.olx.bg", currency: BGN}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.olx.bg/account/", signup_method: [email, phone], captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "Econt/Speedy domestic only; needs forwarder or prepaid label."}
+
+  - id: bazar_bg
+    name: Bazar.bg
+    country: BG
+    rank: 2
+    scope: national
+    site: https://bazar.bg
+    focus: [general]
+    engine: html
+    default_enabled: false
+    confidence: medium
+    why: Long-running Bulgarian classifieds portal, strong in electronics and hobby goods.
+    engine_config:
+      search_url: "https://bazar.bg/obiavi?q={q}"
+      item: "div.listItemLink, a.listItemLink"
+      fields:
+        title: {sel: ".listItemTitle", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".listItemPrice", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false}
+
+  - id: njuskalo_hr
+    name: Njuškalo
+    country: HR
+    rank: 1
+    scope: national
+    site: https://www.njuskalo.hr
+    focus: [general, vehicles, electronics]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Croatia's dominant classifieds site (Styria group), far ahead of any local rival.
+    engine_config:
+      search_url: "https://www.njuskalo.hr/?ctl=search_ads&keywords={q}"
+      item: "li.EntityList-item--Regular"
+      fields:
+        title: {sel: ".entity-title a", attr: text}
+        url: {sel: ".entity-title a", attr: href}
+        price: {sel: ".price--eur", attr: text}
+        image: {sel: "img", attr: src}
+        location: {sel: ".entity-pub-date", attr: text}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.njuskalo.hr/registracija", captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "Overseas/Hrvatska pošta; usually needs a prepaid label."}
+
+  - id: bazaraki_cy
+    name: Bazaraki
+    country: CY
+    rank: 1
+    scope: national
+    site: https://www.bazaraki.com
+    focus: [general, vehicles, property]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: The unambiguous #1 classifieds site in Cyprus, essentially the whole market.
+    engine_config:
+      search_url: "https://www.bazaraki.com/search/?q={q}"
+      item: "div.advert"
+      fields:
+        title: {sel: "a.advert__content-title", attr: text}
+        url: {sel: "a.advert__content-title", attr: href}
+        price: {sel: ".advert__content-price", attr: text}
+        image: {sel: "img", attr: src}
+        location: {sel: ".advert__content-region", attr: text}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.bazaraki.com/accounts/signup/", automatable: false}
+    shipping: {native_to_pt: false, notes: "Island market — shipping to PT is expensive; treat as low priority unless the item is rare."}
+
+  - id: bazos_cz
+    name: Bazoš.cz
+    country: CZ
+    rank: 1
+    scope: national
+    site: https://www.bazos.cz
+    focus: [general, electronics, hobby]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: >-
+      Czechia's highest-traffic peer-to-peer ads site. Deliberately primitive
+      HTML, no JS, no bot defences — which makes it one of the easiest and most
+      reliable sources in this whole catalogue.
+    engine_config:
+      search_url: "https://www.bazos.cz/search.php?hledat={q}&hlokalita=&humkreis=25&cenaod=&cenado="
+      item: "div.inzeraty"
+      fields:
+        title: {sel: "h2.nadpis a", attr: text}
+        url: {sel: "h2.nadpis a", attr: href}
+        price: {sel: ".inzeratycena b", attr: text}
+        image: {sel: "img.obrazek", attr: src}
+        description: {sel: ".popis", attr: text}
+        location: {sel: ".inzeratylok", attr: text}
+      currency: CZK
+    account: {required_for_search: false, kind: none, signup_url: "https://www.bazos.cz/pridat-inzerat.php", automatable: true, notes: "Posting needs only email + SMS confirmation; browsing needs nothing."}
+    shipping: {native_to_pt: false, notes: "Zásilkovna/Packeta reaches PT cheaply — Packeta has PT pickup points. Good prepaid-label candidate."}
+
+  - id: sbazar_cz
+    name: Sbazar.cz
+    country: CZ
+    rank: 2
+    scope: national
+    site: https://www.sbazar.cz
+    focus: [general]
+    engine: json_api
+    default_enabled: false
+    confidence: high
+    why: Seznam's classifieds arm; second to Bazoš but better mobile reach.
+    engine_config:
+      mode: rest
+      search_url: "https://www.sbazar.cz/api/v1/items/search?query={q}&limit={limit}"
+      root: items
+      fields: {id: id, title: name, url: url, price: price, image: "images[0].url", location: "locality.name"}
+      currency: CZK
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false}
+
+  - id: dba_dk
+    name: DBA (Den Blå Avis)
+    country: DK
+    rank: 1
+    scope: national
+    site: https://www.dba.dk
+    focus: [general, furniture, vehicles]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: Denmark's default second-hand marketplace for four decades, now Schibsted-owned.
+    engine_config:
+      mode: next_data
+      search_url: "https://www.dba.dk/soeg/?soeg={q}"
+      root: "props.pageProps.searchResult.docs"
+      fields: {id: id, title: heading, url: canonical_url, price: "price.amount", image: "image.url", location: location}
+      currency: DKK
+    account: {required_for_search: false, kind: session, signup_url: "https://www.dba.dk/bruger/opret", captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "DAO/GLS domestic. Prepaid label or forwarder for PT."}
+
+  - id: okidoki_ee
+    name: Okidoki.ee
+    country: EE
+    rank: 1
+    scope: national
+    site: https://www.okidoki.ee
+    focus: [general]
+    engine: html
+    default_enabled: true
+    confidence: medium
+    why: Estonia's leading general classifieds site; Osta.ee is the auction-format alternative.
+    engine_config:
+      search_url: "https://www.okidoki.ee/buy/all/?query={q}"
+      item: "div.horiz-offer-card"
+      fields:
+        title: {sel: ".horiz-offer-card__title-link", attr: text}
+        url: {sel: ".horiz-offer-card__title-link", attr: href}
+        price: {sel: ".horiz-offer-card__price-value", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false, notes: "Omniva/Itella. Baltic → PT via prepaid label works but is slow (7-12d)."}
+
+  - id: osta_ee
+    name: Osta.ee
+    country: EE
+    rank: 2
+    scope: national
+    site: https://www.osta.ee
+    focus: [general, auctions, collectibles]
+    engine: html
+    default_enabled: false
+    confidence: medium
+    why: Estonia's eBay-style auction site, strong for collectibles and electronics.
+    engine_config:
+      search_url: "https://www.osta.ee/search?q={q}"
+      item: "div.item-card"
+      fields:
+        title: {sel: "a.item-card__title", attr: text}
+        url: {sel: "a.item-card__title", attr: href}
+        price: {sel: ".item-card__price", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false}
+
+  - id: tori_fi
+    name: Tori.fi
+    country: FI
+    rank: 1
+    scope: national
+    site: https://www.tori.fi
+    focus: [general, furniture, electronics]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: Finland's dominant peer-to-peer marketplace (Schibsted), now merged with Oikotie's goods vertical.
+    engine_config:
+      mode: next_data
+      search_url: "https://www.tori.fi/recommerce/forsale/search?q={q}"
+      root: "props.pageProps.initialData.docs"
+      fields: {id: id, title: heading, url: canonical_url, price: "price.amount", image: "image.url", location: location}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.tori.fi/account/register", captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "Posti/Matkahuolto domestic. Nordic → PT is pricey; prefer Vinted for FI fashion."}
+
+  - id: leboncoin_fr
+    name: leboncoin
+    country: FR
+    rank: 1
+    scope: national
+    site: https://www.leboncoin.fr
+    focus: [general, furniture, electronics, vehicles]
+    engine: manual
+    default_enabled: true
+    confidence: high
+    why: >-
+      France's #1 general classifieds site by a wide margin and, for non-fashion
+      goods, the single most valuable EU market to search. Downgraded to `manual`
+      on purpose: leboncoin sits behind DataDome, and hammering it from a server
+      gets the IP blocked within minutes. The app emits a deep search link; if you
+      want it automated, drive it with your own logged-in browser session (see
+      docs/02-accounts.md, "browser-session engines").
+    engine_config:
+      search_url: "https://www.leboncoin.fr/recherche?text={q}"
+      api_hint: "POST https://api.leboncoin.fr/finder/search — requires DataDome cookie + api_key header"
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.leboncoin.fr/compte/creation
+      signup_method: [email, phone]
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: >-
+        leboncoin has integrated "Colis" shipping (Mondial Relay / Colissimo).
+        Cross-border to PT is not offered natively, but France is the strongest
+        corridor for the diaspora-van route — see shipping strategy `diaspora_van`.
+
+  - id: kleinanzeigen_de
+    name: Kleinanzeigen.de
+    country: DE
+    rank: 1
+    scope: national
+    site: https://www.kleinanzeigen.de
+    focus: [general, furniture, electronics, bikes]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: >-
+      Germany's #1 classifieds platform (the former eBay Kleinanzeigen, spun out
+      in 2021), 30M+ users. The deepest pool of used goods in the EU, and German
+      sellers price hardware realistically.
+    engine_config:
+      search_url: "https://www.kleinanzeigen.de/s-{q}/k0"
+      slugify_query: true
+      item: "article.aditem"
+      fields:
+        id: {attr: "data-adid"}
+        title: {sel: ".text-module-begin a", attr: text}
+        url: {sel: ".text-module-begin a", attr: href}
+        price: {sel: ".aditem-main--middle--price-shipping--price", attr: text}
+        image: {sel: ".imagebox img", attr: src}
+        location: {sel: ".aditem-main--top--left", attr: text}
+        description: {sel: ".aditem-main--middle--description", attr: text}
+      rate_limit_rps: 0.5
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.kleinanzeigen.de/m-einloggen.html
+      signup_method: [email]
+      captcha: true
+      automatable: false
+      notes: Aggressive bot detection. Keep rate limits low and prefer a residential connection.
+    shipping:
+      native_to_pt: false
+      notes: >-
+        Has integrated DHL/Hermes shipping but domestic-only. Germany is the best
+        market for the `forwarder_de` strategy (myGermany, Meest) and for
+        prepaid labels — German sellers are used to "Paket" workflows.
+
+  - id: vendora_gr
+    name: Vendora.gr
+    country: GR
+    rank: 1
+    scope: national
+    site: https://www.vendora.gr
+    focus: [general, fashion, electronics]
+    engine: html
+    default_enabled: true
+    confidence: medium
+    why: >-
+      Greece's largest peer-to-peer marketplace for general goods. The Greek market
+      is fragmented (car.gr owns vehicles, Skroutz owns retail), so confidence is
+      medium and Vinted GR is worth running alongside.
+    engine_config:
+      search_url: "https://www.vendora.gr/search?q={q}"
+      item: "div.product-card"
+      fields:
+        title: {sel: ".product-card__title", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".product-card__price", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false, notes: "ELTA/ACS domestic. GR → PT is a long, costly corridor."}
+
+  - id: jofogas_hu
+    name: Jófogás.hu
+    country: HU
+    rank: 1
+    scope: national
+    site: https://www.jofogas.hu
+    focus: [general, furniture, electronics]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Hungary's leading general classifieds site (Schibsted/Adevinta lineage); Vatera covers auctions.
+    engine_config:
+      search_url: "https://www.jofogas.hu/magyarorszag?q={q}"
+      item: "div.list-item"
+      fields:
+        title: {sel: ".subject a", attr: text}
+        url: {sel: ".subject a", attr: href}
+        price: {sel: ".price-value", attr: text}
+        image: {sel: "img", attr: src}
+        location: {sel: ".location", attr: text}
+      currency: HUF
+    account: {required_for_search: false, kind: session, signup_url: "https://www.jofogas.hu/regisztracio", captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "MPL/Packeta. Packeta reaches PT — good prepaid-label corridor."}
+
+  - id: adverts_ie
+    name: Adverts.ie
+    country: IE
+    rank: 1
+    scope: national
+    site: https://www.adverts.ie
+    focus: [general, electronics, hobby]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: >-
+      Ireland's main peer-to-peer marketplace for general goods. DoneDeal is
+      bigger overall but is overwhelmingly vehicles and farm machinery, so for
+      "used items" Adverts is the better default.
+    engine_config:
+      search_url: "https://www.adverts.ie/search?q={q}"
+      item: "li.ad-card, div.ad-card"
+      fields:
+        title: {sel: ".ad-card__title, h3", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".ad-card__price", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.adverts.ie/register/", automatable: false}
+    shipping: {native_to_pt: true, notes: "An Post + Adverts Delivery ships EU-wide; Irish sellers are used to posting abroad."}
+
+  - id: donedeal_ie
+    name: DoneDeal
+    country: IE
+    rank: 2
+    scope: national
+    site: https://www.donedeal.ie
+    focus: [vehicles, farm, general]
+    engine: json_api
+    default_enabled: false
+    confidence: high
+    why: Ireland's largest classifieds site overall — use it when the query is a vehicle, trailer or machinery.
+    engine_config:
+      mode: rest
+      method: POST
+      search_url: "https://api.donedeal.ie/ddapi/api/v3/find/search"
+      body: '{"section":"all","searchQueryGroups":[{"terms":[{"name":"keywords","values":["{q}"]}]}],"paging":{"from":0,"pageSize":{limit}}}'
+      root: ads
+      fields: {id: id, title: header, url: friendlyUrl, price: price, image: "photos[0]", location: county}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false}
+
+  - id: subito_it
+    name: Subito.it
+    country: IT
+    rank: 1
+    scope: national
+    site: https://www.subito.it
+    focus: [general, furniture, electronics, vehicles]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: >-
+      Italy's #1 second-hand marketplace, roughly a third of all Italian resale
+      app usage. Its search backend (hades.subito.it) returns clean JSON, making
+      it one of the most reliable non-eBay integrations here.
+    engine_config:
+      mode: rest
+      search_url: "https://hades.subito.it/v1/search/items?q={q}&t=s&lim={limit}&sort=datedesc"
+      root: ads
+      fields:
+        id: urn
+        title: subject
+        url: urls.default
+        image: "images[0].scale[?size=='big'].secureuri | [0]"
+        location: "geo.town.value"
+        posted: dates.display
+        features: features
+      feature_map: {price: "/price", condition: "/item_condition", shipping: "/item_shippable"}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://areariservata.subito.it/registrazione
+      signup_method: [email, facebook, google]
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: false
+      notes: >-
+        "Spedizione con Subito" (TuttoSubito) is domestic-only. Italian sellers
+        will usually accept a prepaid label; Poste Italiane → PT is ~€15-25/2kg.
+
+  - id: ss_lv
+    name: SS.lv
+    country: LV
+    rank: 1
+    scope: national
+    site: https://www.ss.lv
+    focus: [general, electronics, vehicles, property]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: >-
+      Latvia's overwhelmingly dominant classifieds portal. Like Bazoš, it is
+      plain server-rendered HTML with no bot defences — cheap and reliable to query.
+    engine_config:
+      search_url: "https://www.ss.lv/lv/search-result/?q={q}"
+      item: "tr[id^='tr_']"
+      fields:
+        title: {sel: "a.am", attr: text}
+        url: {sel: "a.am", attr: href}
+        price: {sel: "td:last-child", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: none, automatable: true}
+    shipping: {native_to_pt: false, notes: "Omniva/DPD Baltics. Slow but cheap to PT with a prepaid label."}
+
+  - id: skelbiu_lt
+    name: Skelbiu.lt
+    country: LT
+    rank: 1
+    scope: national
+    site: https://www.skelbiu.lt
+    focus: [general, electronics, vehicles]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Lithuania's leading general classifieds site. (Vinted is Lithuanian-born and dominates fashion there.)
+    engine_config:
+      search_url: "https://www.skelbiu.lt/skelbimai/?keywords={q}"
+      item: "div.simple-ad, li.simple-ad"
+      fields:
+        title: {sel: ".simple-ad-title", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".simple-ad-price", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false, notes: "LP Express/Omniva; Vinted is the better LT route."}
+
+  - id: luxauto_lu
+    name: Luxauto / annonces.lu
+    country: LU
+    rank: 1
+    scope: national
+    site: https://www.luxauto.lu
+    focus: [general, vehicles]
+    engine: manual
+    default_enabled: true
+    confidence: low
+    why: >-
+      Luxembourg has no dominant native second-hand app — the market is small and
+      cross-border by nature. Luxembourgers overwhelmingly use leboncoin.fr,
+      Kleinanzeigen.de, 2dehands.be and Vinted LU. Kept as a manual deep link;
+      for real LU coverage rely on the FR/DE/BE entries and Vinted.
+    engine_config:
+      search_url: "https://www.luxauto.lu/fr/recherche?q={q}"
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false, notes: "Strong diaspora corridor: LU → PT vans run weekly. See shipping strategy `diaspora_van`."}
+
+  - id: maltapark_mt
+    name: MaltaPark
+    country: MT
+    rank: 1
+    scope: national
+    site: https://www.maltapark.com
+    focus: [general]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Malta's single national classifieds site; essentially the entire local market.
+    engine_config:
+      search_url: "https://www.maltapark.com/search?q={q}"
+      item: "div.item-listing, div.product-item"
+      fields:
+        title: {sel: "a.item-title, h3", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".item-price", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.maltapark.com/register", automatable: false}
+    shipping: {native_to_pt: false, notes: "Island market — shipping is the dominant cost. Low priority."}
+
+  - id: marktplaats_nl
+    name: Marktplaats.nl
+    country: NL
+    rank: 1
+    scope: national
+    site: https://www.marktplaats.nl
+    focus: [general, furniture, electronics, bikes]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: >-
+      The Netherlands' #1 marketplace since 1999 and one of the highest-penetration
+      classifieds sites in the world. Its `lrp/api/search` endpoint returns clean
+      JSON — a top-tier source alongside eBay and Subito.
+    engine_config:
+      mode: rest
+      search_url: "https://www.marktplaats.nl/lrp/api/search?query={q}&limit={limit}&offset=0&sortBy=SORT_INDEX&sortOrder=DECREASING"
+      root: listings
+      price_divisor: 100        # the API quotes cents
+      fields:
+        id: itemId
+        title: title
+        url: vipUrl
+        price: "priceInfo.priceCents"
+        image: "pictures[0].largeUrl"
+        location: "location.cityName"
+        seller: "sellerInformation.sellerName"
+        posted: date
+        description: categorySpecificDescription
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.marktplaats.nl/identity/v2/registration
+      signup_method: [email]
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: false
+      notes: >-
+        Integrated shipping (Verzenden via Marktplaats) is NL-only, but Dutch
+        sellers ship abroad more willingly than most. PostNL → PT ~€16/2kg.
+
+  - id: olx_pl
+    name: OLX.pl
+    country: PL
+    rank: 1
+    scope: national
+    site: https://www.olx.pl
+    focus: [general, electronics, furniture]
+    engine: olx
+    default_enabled: true
+    confidence: high
+    why: >-
+      Poland's #1 classifieds platform. Poland is the best-value EU market for
+      used electronics and tools, and OLX's InPost integration makes logistics easy.
+    engine_config: {base_url: "https://www.olx.pl", currency: PLN}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.olx.pl/account/
+      signup_method: [email, phone, google, facebook]
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: >-
+        The standout. OLX Przesyłki uses InPost, and InPost now operates parcel
+        lockers in Portugal — so a Polish seller can drop into a Paczkomat and it
+        reaches a PT locker. Cheapest reliable long-distance corridor in this catalogue.
+
+  - id: allegro_lokalnie_pl
+    name: Allegro Lokalnie
+    country: PL
+    rank: 2
+    scope: national
+    site: https://allegrolokalnie.pl
+    focus: [general, electronics]
+    engine: manual
+    default_enabled: false
+    confidence: high
+    why: Allegro's peer-to-peer arm; second to OLX but with better buyer protection.
+    engine_config: {search_url: "https://allegrolokalnie.pl/oferty/q/{q}"}
+    account: {required_for_search: false, kind: session, automatable: false, notes: "Allegro has an official REST API (developer.allegro.pl) but it does not cover Lokalnie listings."}
+    shipping: {native_to_pt: true, notes: InPost lockers reach PT.}
+
+  - id: olx_pt
+    name: OLX.pt
+    country: PT
+    rank: 1
+    scope: national
+    site: https://www.olx.pt
+    focus: [general, electronics, furniture, vehicles]
+    engine: olx
+    default_enabled: true
+    confidence: high
+    why: >-
+      Portugal's #1 general classifieds site, and your home market — no shipping
+      problem to solve at all. Always search this first: if the item exists
+      locally at a sane price, every other row in the results is noise.
+    engine_config: {base_url: "https://www.olx.pt", currency: EUR}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.olx.pt/conta/
+      signup_method: [email, phone, google, facebook]
+      captcha: true
+      automatable: false
+    shipping: {native_to_pt: true, notes: "Domestic. OLX Envios via CTT Expresso, or in-person pickup."}
+
+  - id: custojusto_pt
+    name: CustoJusto.pt
+    country: PT
+    rank: 2
+    scope: national
+    site: https://www.custojusto.pt
+    focus: [general, vehicles]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Portugal's Schibsted-lineage classifieds site; smaller than OLX but still worth the extra call at home.
+    engine_config:
+      search_url: "https://www.custojusto.pt/todo-portugal?q={q}"
+      item: "div.list-item, article"
+      fields:
+        title: {sel: "a.item-link, h2 a", attr: text}
+        url: {sel: "a", attr: href}
+        price: {sel: ".item-price, .price", attr: text}
+        image: {sel: "img", attr: src}
+        location: {sel: ".item-location", attr: text}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: true, notes: Domestic.}
+
+  - id: olx_ro
+    name: OLX.ro
+    country: RO
+    rank: 1
+    scope: national
+    site: https://www.olx.ro
+    focus: [general, electronics, furniture]
+    engine: olx
+    default_enabled: true
+    confidence: high
+    why: Romania's dominant classifieds platform by a wide margin; Publi24 is a distant second.
+    engine_config: {base_url: "https://www.olx.ro", currency: RON}
+    account: {required_for_search: false, kind: session, signup_url: "https://www.olx.ro/cont/", signup_method: [email, phone], captcha: true, automatable: false}
+    shipping: {native_to_pt: false, notes: "Sameday/Cargus domestic. Prepaid label works; 6-10 days to PT."}
+
+  - id: bazos_sk
+    name: Bazoš.sk
+    country: SK
+    rank: 1
+    scope: national
+    site: https://www.bazos.sk
+    focus: [general, electronics, hobby]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Slovakia's top peer-to-peer ads site; same plain-HTML stack as Bazoš.cz.
+    engine_config:
+      search_url: "https://www.bazos.sk/search.php?hledat={q}&hlokalita=&humkreis=25"
+      item: "div.inzeraty"
+      fields:
+        title: {sel: "h2.nadpis a", attr: text}
+        url: {sel: "h2.nadpis a", attr: href}
+        price: {sel: ".inzeratycena b", attr: text}
+        image: {sel: "img.obrazek", attr: src}
+        description: {sel: ".popis", attr: text}
+    account: {required_for_search: false, kind: none, automatable: true}
+    shipping: {native_to_pt: false, notes: Packeta reaches PT pickup points.}
+
+  - id: bolha_si
+    name: Bolha.com
+    country: SI
+    rank: 1
+    scope: national
+    site: https://www.bolha.com
+    focus: [general, electronics, vehicles]
+    engine: html
+    default_enabled: true
+    confidence: high
+    why: Slovenia's leading classifieds site; same Styria platform as Njuškalo, so the selectors are shared.
+    engine_config:
+      search_url: "https://www.bolha.com/?ctl=search_ads&keywords={q}"
+      item: "li.EntityList-item--Regular"
+      fields:
+        title: {sel: ".entity-title a", attr: text}
+        url: {sel: ".entity-title a", attr: href}
+        price: {sel: ".price--eur", attr: text}
+        image: {sel: "img", attr: src}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false}
+
+  - id: wallapop_es
+    name: Wallapop
+    country: ES
+    rank: 1
+    scope: national
+    site: https://es.wallapop.com
+    focus: [general, electronics, furniture, fashion]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: >-
+      Spain's #1 general second-hand app (with Vinted they are ~80% of Spanish
+      resale usage). Strategically the most important non-PT market for you:
+      Spain shares a land border, so ES→PT is the cheapest and fastest corridor
+      in Europe, and border-town pickup is a real option.
+    engine_config:
+      mode: rest
+      search_url: "https://api.wallapop.com/api/v3/search?keywords={q}&source=search_box&longitude=-3.69&latitude=40.42"
+      headers: {X-DeviceOS: "0", Accept: "application/json, text/plain, */*"}
+      root: "data.section.payload.items"
+      fields:
+        id: id
+        title: title
+        url: "web_slug"
+        url_template: "https://es.wallapop.com/item/{}"
+        price: "price.amount"
+        currency_field: "price.currency"
+        image: "images[0].urls.big"
+        location: "location.city"
+        description: description
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://es.wallapop.com/signup
+      signup_method: [email, phone, google, apple]
+      captcha: true
+      automatable: false
+      notes: Phone verification is effectively mandatory for messaging sellers.
+    shipping:
+      native_to_pt: false
+      notes: >-
+        Wallapop Envíos (Correos/SEUR) is Spain-domestic, BUT this is the one
+        market where `border_pickup` shines: ship to a Correos office in Tui,
+        Badajoz or Ayamonte and collect by car. Also the best `forwarder_es` target.
+
+  - id: milanuncios_es
+    name: Milanuncios
+    country: ES
+    rank: 2
+    scope: national
+    site: https://www.milanuncios.com
+    focus: [general, vehicles]
+    engine: manual
+    default_enabled: false
+    confidence: high
+    why: Spain's long-standing free classifieds site; strong for vehicles and bulky goods. DataDome-protected, so manual.
+    engine_config: {search_url: "https://www.milanuncios.com/anuncios/?s={q}"}
+    account: {required_for_search: false, kind: session, automatable: false}
+    shipping: {native_to_pt: false, notes: Border pickup applies as with Wallapop.}
+
+  - id: blocket_se
+    name: Blocket.se
+    country: SE
+    rank: 1
+    scope: national
+    site: https://www.blocket.se
+    focus: [general, furniture, electronics, vehicles]
+    engine: json_api
+    default_enabled: true
+    confidence: high
+    why: Sweden's dominant classifieds site (Schibsted); Tradera covers the auction format.
+    engine_config:
+      mode: rest
+      search_url: "https://api.blocket.se/search_bff/v2/content?q={q}&lim={limit}&sort=rel"
+      root: data
+      fields: {id: ad_id, title: subject, url: share_url, price: "price.value", image: "images[0].url", location: "location[0].name", posted: list_time}
+      currency: SEK
+      needs_bearer: true
+    account:
+      required_for_search: true
+      kind: session
+      signup_url: https://www.blocket.se/registrera
+      automatable: false
+      notes: >-
+        The search_bff endpoint wants a bearer token that the site mints for
+        anonymous visitors. Import it once from your browser's devtools into the
+        vault as `bearer`; it lasts weeks.
+    shipping: {native_to_pt: false, notes: "PostNord/Schenker. Nordic → PT is expensive; ~€25-40 for 2kg."}
+
+  - id: tradera_se
+    name: Tradera
+    country: SE
+    rank: 2
+    scope: national
+    site: https://www.tradera.com
+    focus: [auctions, collectibles, fashion, electronics]
+    engine: json_api
+    default_enabled: false
+    confidence: high
+    why: >-
+      Sweden's eBay-equivalent auction site, owned by PayPal-alumni Schibsted
+      rivals. Notable because it publishes an official public API — worth wiring
+      up properly if Nordic collectibles matter to you.
+    engine_config:
+      mode: rest
+      search_url: "https://api.tradera.com/v3/search/items?query={q}&pageSize={limit}"
+      root: items
+      fields: {id: id, title: shortDescription, url: itemUrl, price: maxBid, image: imageLinks}
+      currency: SEK
+    account: {required_for_search: true, kind: api_key, signup_url: "https://api.tradera.com/", credentials: [app_id, app_key], automatable: true}
+    shipping: {native_to_pt: false}
+
+  # ── Vinted national domains ──
+  # Vinted shares one catalogue across connected country pools, so the pan-EU
+  # `vinted` entry above already returns most of these sellers. These are kept
+  # for completeness and per-country targeting; enable one to force its locale
+  # (language, currency display and local-shipping filters follow the domain).
+
+  - id: vinted_at
+    name: Vinted Austria
+    country: AT
+    rank: 2
+    scope: national
+    site: https://www.vinted.at
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.at", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.at/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_be
+    name: Vinted Belgium
+    country: BE
+    rank: 1
+    scope: national
+    site: https://www.vinted.be
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.be", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.be/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_cz
+    name: Vinted Czechia
+    country: CZ
+    rank: 1
+    scope: national
+    site: https://www.vinted.cz
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.cz", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.cz/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_de
+    name: Vinted Germany
+    country: DE
+    rank: 2
+    scope: national
+    site: https://www.vinted.de
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.de", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.de/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_dk
+    name: Vinted Denmark
+    country: DK
+    rank: 2
+    scope: national
+    site: https://www.vinted.dk
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.dk", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.dk/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_ee
+    name: Vinted Estonia
+    country: EE
+    rank: 2
+    scope: national
+    site: https://www.vinted.ee
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.ee", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.ee/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_es
+    name: Vinted Spain
+    country: ES
+    rank: 1
+    scope: national
+    site: https://www.vinted.es
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.es", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.es/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_fi
+    name: Vinted Finland
+    country: FI
+    rank: 2
+    scope: national
+    site: https://www.vinted.fi
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.fi", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.fi/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_fr
+    name: Vinted France
+    country: FR
+    rank: 1
+    scope: national
+    site: https://www.vinted.fr
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.fr", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.fr/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_gr
+    name: Vinted Greece
+    country: GR
+    rank: 2
+    scope: national
+    site: https://www.vinted.gr
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.gr", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.gr/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_hr
+    name: Vinted Croatia
+    country: HR
+    rank: 2
+    scope: national
+    site: https://www.vinted.hr
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.hr", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.hr/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_hu
+    name: Vinted Hungary
+    country: HU
+    rank: 2
+    scope: national
+    site: https://www.vinted.hu
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.hu", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.hu/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_ie
+    name: Vinted Ireland
+    country: IE
+    rank: 2
+    scope: national
+    site: https://www.vinted.ie
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.ie", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.ie/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_it
+    name: Vinted Italy
+    country: IT
+    rank: 1
+    scope: national
+    site: https://www.vinted.it
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.it", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.it/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_lt
+    name: Vinted Lithuania
+    country: LT
+    rank: 1
+    scope: national
+    site: https://www.vinted.lt
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.lt", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.lt/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_lu
+    name: Vinted Luxembourg
+    country: LU
+    rank: 1
+    scope: national
+    site: https://www.vinted.lu
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.lu", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.lu/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_lv
+    name: Vinted Latvia
+    country: LV
+    rank: 2
+    scope: national
+    site: https://www.vinted.lv
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.lv", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.lv/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_nl
+    name: Vinted Netherlands
+    country: NL
+    rank: 1
+    scope: national
+    site: https://www.vinted.nl
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.nl", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.nl/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_pl
+    name: Vinted Poland
+    country: PL
+    rank: 1
+    scope: national
+    site: https://www.vinted.pl
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.pl", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.pl/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_ro
+    name: Vinted Romania
+    country: RO
+    rank: 2
+    scope: national
+    site: https://www.vinted.ro
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.ro", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.ro/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_se
+    name: Vinted Sweden
+    country: SE
+    rank: 2
+    scope: national
+    site: https://www.vinted.se
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.se", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.se/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_si
+    name: Vinted Slovenia
+    country: SI
+    rank: 2
+    scope: national
+    site: https://www.vinted.si
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Top-3 resale app locally; strongest for fashion, kids and home textiles.
+    engine_config: {base_url: "https://www.vinted.si", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.si/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.
+
+  - id: vinted_sk
+    name: Vinted Slovakia
+    country: SK
+    rank: 1
+    scope: national
+    site: https://www.vinted.sk
+    focus: [fashion, kids, home, books]
+    engine: vinted
+    default_enabled: false
+    dedupe_group: vinted
+    confidence: high
+    why: Vinted is the most-used second-hand app in this country.
+    engine_config: {base_url: "https://www.vinted.sk", per_page: 48, order: newest_first}
+    account:
+      required_for_search: false
+      kind: session
+      signup_url: https://www.vinted.sk/member/signup
+      captcha: true
+      automatable: false
+    shipping:
+      native_to_pt: true
+      notes: Cross-border shipping inside the Vinted pool, Buyer Protection included.

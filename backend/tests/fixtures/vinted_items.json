@@ -1,0 +1,8 @@
+{"items": [
+  {"id": 5551001, "title": "Levi's 501 vintage", "url": "https://www.vinted.pt/items/5551001",
+   "price": {"amount": "24.0", "currency_code": "EUR"}, "photo": {"url": "https://images.vinted.net/a.jpg"},
+   "brand_title": "Levi's", "size_title": "W32", "status": "Muito bom estado", "user": {"login": "ana_pt"}},
+  {"id": 5551002, "title": "Levi's trucker jacket", "url": "https://www.vinted.pt/items/5551002",
+   "price": {"amount": "39.5", "currency_code": "EUR"}, "photo": {"thumbnails": [{"url": "https://images.vinted.net/b.jpg"}]},
+   "brand_title": "Levi's", "size_title": "M", "status": "Bom estado", "user": {"login": "joao"}}
+], "pagination": {"total_entries": 2}}

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>used-finds-eu</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🛒</text></svg>">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">🛒</span>
+    <div>
+      <h1>used-finds-eu</h1>
+      <p class="tagline">One search box over Europe's second-hand marketplaces, priced to your door in Portugal.</p>
+    </div>
+  </div>
+  <div class="health" id="health"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="search" role="tab">Search</button>
+  <button class="tab" data-tab="markets" role="tab">Marketplaces</button>
+  <button class="tab" data-tab="accounts" role="tab">Accounts</button>
+  <button class="tab" data-tab="shipping" role="tab">Shipping to PT</button>
+</nav>
+
+<!-- ───────────────────────────── Search ───────────────────────────── -->
+<section class="panel active" id="tab-search">
+  <form class="searchbar" id="search-form">
+    <input type="search" id="q" placeholder="What are you looking for?  e.g. Nikon D750, Eames chair, Thermomix TM6" autocomplete="off" required>
+    <button type="submit" id="go">Search Europe</button>
+  </form>
+
+  <div class="controls">
+    <label>Sort
+      <select id="sort">
+        <option value="landed_asc">Cheapest delivered to PT</option>
+        <option value="relevance" selected>Best match</option>
+        <option value="price_asc">Lowest price</option>
+        <option value="price_desc">Highest price</option>
+        <option value="newest">Newest</option>
+      </select>
+    </label>
+    <label>Max €<input type="number" id="max-price" min="0" step="10" placeholder="any"></label>
+    <label>Min €<input type="number" id="min-price" min="0" step="10" placeholder="any"></label>
+    <label>Per site<input type="number" id="limit" min="1" max="100" value="24"></label>
+    <label class="check"><input type="checkbox" id="include-disabled"> Include off-by-default sites</label>
+    <label class="check"><input type="checkbox" id="fresh"> Skip cache</label>
+    <button type="button" class="ghost" id="pick-countries">Countries: all</button>
+  </div>
+
+  <div class="country-picker hidden" id="country-picker"></div>
+
+  <div class="layout">
+    <aside class="facets" id="facets"></aside>
+    <main>
+      <div class="stats" id="stats"></div>
+      <div class="results" id="results"></div>
+      <div class="market-status" id="market-status"></div>
+    </main>
+  </div>
+</section>
+
+<!-- ──────────────────────────  Marketplaces ─────────────────────────── -->
+<section class="panel" id="tab-markets">
+  <p class="lede">The leading second-hand platform in each of the 27 EU member states, plus the pan-European players. Rank 1 is what locals reach for first.</p>
+  <div id="markets"></div>
+</section>
+
+<!-- ───────────────────────────  Accounts ──────────────────────────── -->
+<section class="panel" id="tab-accounts">
+  <div class="notice">
+    <strong>Accounts are created by you, by hand — on purpose.</strong>
+    <p>
+      Every platform here requires a CAPTCHA, an SMS code or both at signup, and automating
+      registration breaches all of their terms of service and gets accounts banned rather than
+      created. So this tool does the honest version: you register once per site (5 minutes each,
+      links below), and store the resulting API key or session cookie in a local encrypted vault.
+      Most sites don't need an account to <em>search</em> at all — only to message a seller and buy.
+      Start with eBay, which is a real, free, self-service API key and needs no scraping.
+      See <code>docs/02-accounts.md</code> for the full playbook.
+    </p>
+  </div>
+  <div id="accounts"></div>
+</section>
+
+<!-- ───────────────────────────  Shipping ──────────────────────────── -->
+<section class="panel" id="tab-shipping">
+  <p class="lede">Pick where the item is and roughly what it is. Routes are ranked by cost plus how much of your Saturday they consume.</p>
+  <form class="shipbar" id="ship-form">
+    <label>From
+      <select id="ship-country"></select>
+    </label>
+    <label>Item<input id="ship-item" placeholder="e.g. washing machine, camera lens, sofa"></label>
+    <label>Price €<input type="number" id="ship-price" min="0" step="10" placeholder="optional"></label>
+    <label>Weight kg<input type="number" id="ship-weight" min="0" step="0.5" placeholder="auto"></label>
+    <button type="submit">Show routes</button>
+  </form>
+  <div id="ship-results"></div>
+</section>
+
+<!-- listing → shipping drawer -->
+<div class="drawer-backdrop hidden" id="drawer-backdrop"></div>
+<aside class="drawer hidden" id="drawer">
+  <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+  <div id="drawer-body"></div>
+</aside>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

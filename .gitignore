@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Never commit the credential vault or cached marketplace responses, even if a
+# stray UFEU_STATE_DIR points them inside the repo.
+.ufeu/
+vault.enc
+vault.key
+vault.salt
+cache.sqlite3
+fx-rates.xml

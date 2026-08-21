@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "used-finds-eu"
+version = "0.1.0"
+description = "One search box over Europe's second-hand marketplaces, priced to your door in Portugal."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx[http2]>=0.27",
+    "pydantic>=2.7",
+    "PyYAML>=6.0",
+    "jmespath>=1.0",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+    "cryptography>=42.0",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2", "pytest-asyncio>=0.23", "respx>=0.21"]
+
+[project.scripts]
+ufeu = "ufeu.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ufeu*"]
+
+[tool.setuptools.package-data]
+ufeu = ["data/*.yaml"]

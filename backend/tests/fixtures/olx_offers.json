@@ -1,0 +1,12 @@
+{"data": [
+  {"id": 909001, "title": "iPhone 13 Pro 256GB", "url": "https://www.olx.pl/d/oferta/iphone-13-pro-909001.html",
+   "description": "Stan bardzo dobry, bateria 89%.", "created_time": "2026-08-18T07:30:00+02:00",
+   "params": [{"key": "price", "value": {"value": 1899, "currency": "PLN", "label": "1899 zł"}},
+              {"key": "state", "value": {"label": "Używane"}}],
+   "photos": [{"link": "https://ireland.apollo.olxcdn.com/v1/files/abc/image;s={width}x{height}"}],
+   "location": {"city": {"name": "Kraków"}, "region": {"name": "Małopolskie"}},
+   "user": {"name": "Marek"}, "delivery": {"rock": {"active": true}}},
+  {"id": 909002, "title": "iPhone 13 Pro obudowa", "url": "https://www.olx.pl/d/oferta/etui-909002.html",
+   "params": [{"key": "price", "value": {"label": "Za darmo"}}], "photos": [],
+   "location": {"city": {"name": "Gdańsk"}}}
+]}
