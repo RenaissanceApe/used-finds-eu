@@ -180,7 +180,9 @@ def strip_document_wrapper(html: str) -> str:
     inner = body.group(1) if body else html
     parts = []
     if title:
-        parts.append(f"<title>{title.group(1)}</title>")
+        # Hosts that show this in a gallery want the product name alone; the
+        # descriptive half of the page title is an explainer, not a name.
+        parts.append(f"<title>{title.group(1).split(' — ')[0]}</title>")
     parts.extend(styles)
     parts.append(inner.strip())
     return "\n".join(parts) + "\n"
