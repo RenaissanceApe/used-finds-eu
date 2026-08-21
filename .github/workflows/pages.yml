@@ -36,6 +36,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The workflow token carries `pages: write`, so the runner can turn Pages
+      # on itself rather than waiting for someone to click through Settings.
+      # Still requires the repo to be public on a free plan.
+      - uses: actions/configure-pages@v4
+        continue-on-error: true
+        with:
+          enablement: true
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
