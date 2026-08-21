@@ -18,9 +18,11 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
+import re
 import sys
+from collections import Counter
 from pathlib import Path
+from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
@@ -43,6 +45,11 @@ async def main() -> int:
     parser.add_argument("marketplace", help="catalogue id, e.g. maltapark_mt")
     parser.add_argument("-q", "--query", default="iphone")
     parser.add_argument("--save", help="write the raw response body to this path")
+    parser.add_argument(
+        "--url",
+        help="override the search URL (use %%QUERY%% for the term) to try a candidate path "
+             "without editing the catalogue first",
+    )
     args = parser.parse_args()
 
     catalog = load_catalog()
@@ -56,7 +63,11 @@ async def main() -> int:
         timeout=REQUEST_TIMEOUT, headers={"User-Agent": USER_AGENT}, follow_redirects=True
     ) as client:
         engine = build_engine(market, client, get_credentials(market.id))
-        url = engine.build_search_url(query)
+        url = (
+            args.url.replace("%QUERY%", quote(args.query))
+            if args.url
+            else engine.build_search_url(query)
+        )
 
         print(f"\n{market.name}  ({market.id}, engine={market.engine})")
         print(f"GET {url}\n")
@@ -104,6 +115,8 @@ async def main() -> int:
         return 0
 
     # ── HTML responses ────────────────────────────────────────────────────
+    describe_page_shape(body, args.query)
+
     soup = BeautifulSoup(body, "lxml")
     item_selector = market.engine_config.get("item")
     if item_selector:
@@ -115,9 +128,17 @@ async def main() -> int:
                 got = (value.get_text(" ", strip=True)[:60] if value else None)
                 print(f"    {field:<12} {'✓' if value else '✗'}  {got!r}")
         else:
-            print("\n  repeated listing-shaped elements on the page:")
-            for hint in _suggest_item_selectors(soup, limit=6) or ["    (none found)"]:
+            print("\n  repeated listing-shaped elements (link + price-like text):")
+            hints = _suggest_item_selectors(soup, limit=6)
+            for hint in hints or ["(none found)"]:
                 print(f"    {hint}")
+            if not hints:
+                # Fall back to raw structure: on a JS-rendered shell there is
+                # nothing listing-shaped, but seeing what *is* repeated tells us
+                # whether we are looking at an app skeleton or the wrong page.
+                print("\n  most repeated elements of any kind:")
+                for line in repeated_elements(soup, limit=8) or ["(nothing repeats)"]:
+                    print(f"    {line}")
 
     payload, strategy = extract_embedded_json(body)
     print(f"\n  embedded JSON: {strategy}")
@@ -125,6 +146,51 @@ async def main() -> int:
         for hint in suggest_roots(payload, limit=6):
             print(f"    candidate root: {hint}")
     return 0
+
+
+_FRAMEWORKS = [
+    ("Next.js", re.compile(r"__NEXT_DATA__|/_next/static", re.I)),
+    ("Nuxt", re.compile(r"__NUXT__|/_nuxt/", re.I)),
+    ("React", re.compile(r"react(?:-dom)?(?:\.production)?\.min\.js|data-reactroot", re.I)),
+    ("Vue", re.compile(r"\bvue(?:\.runtime)?(?:\.min)?\.js|data-v-[0-9a-f]{8}", re.I)),
+    ("Angular", re.compile(r"ng-version=|angular(?:\.min)?\.js", re.I)),
+    ("Cloudflare challenge", re.compile(r"cdn-cgi/challenge-platform|__cf_chl", re.I)),
+]
+
+
+def describe_page_shape(body: str, term: str) -> None:
+    """Answer the one question that decides whether a selector fix is possible.
+
+    If the search term is nowhere in the HTML, the server did not render the
+    results — no CSS selector will ever match them, and the site needs either
+    its underlying XHR endpoint or a browser engine. Everything else is detail.
+    """
+    occurrences = body.lower().count(term.lower())
+    print(f"\n  search term {term!r} appears in the HTML: "
+          f"{'yes, ' + str(occurrences) + ' times' if occurrences else 'NO'}")
+    if not occurrences:
+        print("    → the server did not render the results. No selector can match them.")
+        print("      Find the XHR that fetches them (devtools → Network → Fetch/XHR) and")
+        print("      point a json_api engine at it, or move this site to a browser engine.")
+
+    detected = [name for name, pattern in _FRAMEWORKS if pattern.search(body)]
+    if detected:
+        print(f"  framework hints: {', '.join(detected)}")
+
+    scripts = len(re.findall(r"<script\b", body, re.I))
+    links = len(re.findall(r"<a\s[^>]*href=", body, re.I))
+    print(f"  page has {links} links and {scripts} script tags")
+
+
+def repeated_elements(soup, limit: int = 8) -> list[str]:
+    """Most common tag+class signatures, unfiltered — the page's raw skeleton."""
+    counts: Counter[str] = Counter()
+    for node in soup.find_all(True):
+        classes = node.get("class") or []
+        if not classes:
+            continue
+        counts[f"{node.name}." + ".".join(sorted(classes)[:3])] += 1
+    return [f"{sig}  ({n}\u00d7)" for sig, n in counts.most_common(limit) if n >= 3]
 
 
 def _first_object(node, depth: int = 0):
