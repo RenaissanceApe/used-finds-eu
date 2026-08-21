@@ -1,8 +1,8 @@
 # Publish the static build to GitHub Pages.
 #
-# Two things must be true in repo Settings before this can run:
-#   1. The repository is public (Pages on a private repo needs a paid plan).
-#   2. Settings → Pages → Build and deployment → Source = "GitHub Actions".
+# Pages is enabled by the configure-pages step below using the workflow token,
+# so this needs no manual setup. Note that Pages from a *private* repository
+# requires a paid GitHub plan; on the free plan the repo must be public.
 #
 # site/data.json is regenerated here from backend/ufeu/data/*.yaml, so the
 # published catalogue can never drift from the one the app actually searches.
@@ -11,7 +11,9 @@ name: Deploy site to GitHub Pages
 
 on:
   push:
-    branches: [main, claude/eu-secondhand-aggregator-zxyqmg]
+    # Only the default branch: the github-pages environment rejects deployments
+    # from any other, so building them just manufactures red runs.
+    branches: [main]
     paths:
       - site/**
       - backend/ufeu/data/**

@@ -13,9 +13,11 @@ out of Paris.
 
 ## Live site
 
-**<https://renaissanceape.github.io/used-finds-eu/>** — once Pages is switched on
-(two settings: the repo must be public, and Pages source set to GitHub Actions;
-see [docs/05-hosting.md](docs/05-hosting.md)).
+**<https://www.lumenandpixel.com/used-finds-eu/>** — deployed from `main` by
+[the Pages workflow](.github/workflows/pages.yml) on every push. The workflow
+enables Pages itself via `actions/configure-pages`, rebuilds `site/data.json`
+from the catalogue and runs the catalogue tests before publishing, so the live
+site can never drift from what the app searches.
 
 The hosted build is static, so it does what a browser can do without a server:
 the full marketplace catalogue, the complete shipping-to-Portugal calculator,

@@ -26,32 +26,29 @@ through it.
 
 `.github/workflows/pages.yml` does the whole build — including regenerating
 `site/data.json` from the YAML catalogue, so the published site can never drift
-from what the app searches. Two settings have to be right first:
-
-**1. The repository must be public.** GitHub Pages on a *private* repository
-requires a paid plan (Pro/Team/Enterprise). On the free plan the only way to get
-a `github.io` URL is to make the repo public — which publishes the source, so
-it is your call. There are no credentials in the repo (`.gitignore` excludes the
-vault, and secrets live in `~/.local/state/ufeu/`, never here), so it is safe to
-publish from that angle.
-
-*Settings → General → Danger Zone → Change repository visibility → Public.*
-
-**2. Pages source must be "GitHub Actions".**
-
-*Settings → Pages → Build and deployment → Source → **GitHub Actions**.*
-
-Then merge this branch into `main`. The workflow runs on push and the site
-lands at:
+from what the app searches. It needs no manual setup: the `actions/configure-pages`
+step turns Pages on using the workflow token's `pages: write` permission, and
+`actions/deploy-pages` publishes. Push to `main` and it goes live at:
 
 ```
-https://renaissanceape.github.io/used-finds-eu/
+https://www.lumenandpixel.com/used-finds-eu/
 ```
 
-If the deploy fails with *"Branch is not allowed to deploy to github-pages due
-to environment protection rules"*, the `github-pages` environment is restricted
-to the default branch — either merge to `main` (simplest) or add the branch
-under *Settings → Environments → github-pages → Deployment branches*.
+(This account has a custom Pages domain configured, so the site is served from
+`www.lumenandpixel.com` rather than the default `renaissanceape.github.io`.)
+
+**Plan note.** Pages from a *private* repository requires a paid GitHub plan
+(Pro/Team/Enterprise) — this account has one, which is why the repo can stay
+private. On a free plan the repo would have to be public instead. There are no
+credentials in the repo either way (`.gitignore` excludes the vault, and secrets
+live in `~/.local/state/ufeu/`), so publishing is safe from that angle.
+
+The `github-pages` environment only accepts deployments from the default branch,
+which is why the workflow triggers on `main` alone — pushing it from a feature
+branch produces a run that builds fine and then fails at the deploy step with
+*"Branch is not allowed to deploy to github-pages due to environment protection
+rules"*. Merge to `main`, or add the branch under *Settings → Environments →
+github-pages → Deployment branches*.
 
 ## Free domains, if `github.io` is not weird enough
 
