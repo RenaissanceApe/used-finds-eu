@@ -1,0 +1,14 @@
+[
+  {"title": "Nikon D750 body + 24-120mm f/4", "price_eur": 890.0, "condition": "Very good", "description": "Full-frame DSLR, 32k shutter count, boxed.", "seller": "photo_hans"},
+  {"title": "Nikon D750 body only", "price_eur": 640.0, "condition": "Good", "description": "Body only, minor grip wear.", "seller": "marta_r"},
+  {"title": "LEGO Millennium Falcon 75192 UCS", "price_eur": 620.0, "condition": "Used - complete", "description": "All pieces, instructions, no box.", "seller": "brickvault"},
+  {"title": "LEGO Technic 42115 Lamborghini Sian", "price_eur": 210.0, "condition": "Used", "description": "Built once, complete with box.", "seller": "kris_p"},
+  {"title": "iPhone 13 Pro 256GB Graphite", "price_eur": 430.0, "condition": "Good", "description": "Battery health 89%, unlocked.", "seller": "mobilestore_eu"},
+  {"title": "iPhone 12 64GB Blue", "price_eur": 245.0, "condition": "Fair", "description": "Screen scratch, fully working.", "seller": "ana_l"},
+  {"title": "Bicicleta gravel Canyon Grail AL 7", "price_eur": 980.0, "condition": "Very good", "description": "Size M, GRX 810, new tyres.", "seller": "velo_paulo"},
+  {"title": "Vitra Eames EA117 office chair", "price_eur": 540.0, "condition": "Used", "description": "Original, black leather, gas lift ok.", "seller": "designdepot"},
+  {"title": "Technics SL-1210 MK2 turntable", "price_eur": 720.0, "condition": "Good", "description": "Serviced, new cartridge.", "seller": "vinyl_lars"},
+  {"title": "Sony A7 III body", "price_eur": 950.0, "condition": "Very good", "description": "Two batteries, 18k actuations.", "seller": "camerashop_nl"},
+  {"title": "Thermomix TM6", "price_eur": 780.0, "condition": "Like new", "description": "Under warranty, all accessories.", "seller": "cook_ines"},
+  {"title": "Dyson V11 Absolute cordless vacuum", "price_eur": 260.0, "condition": "Good", "description": "New battery fitted 2025.", "seller": "home_dk"}
+]

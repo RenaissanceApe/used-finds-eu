@@ -1,0 +1,422 @@
+# Getting it to Portugal — deliverable (f).
+#
+# The premise: the item you want is usually in Germany, Poland or Spain, and the
+# seller's ad says "envio só para o país" / "nur Versand innerhalb Deutschlands".
+# That is a soft constraint, not a hard one. Almost every one of those sellers
+# will hand a parcel to a courier if the label is already paid for and the drop-off
+# is 300m away. Most of the strategies below are variations on removing work and
+# risk from the seller rather than persuading them to take on more.
+#
+# Costs are indicative EUR for a real 2026 EU-to-PT movement and exist to *rank*
+# options, not to quote them. Verify before you commit money.
+#
+# effort  1 = click buy, 5 = you are coordinating humans
+# risk    1 = platform-protected, 5 = you are trusting a stranger with no recourse
+
+version: 1
+
+# How far each country is from Portugal, logistically rather than geographically.
+zones:
+  PT: 0
+  # Pan-EU platforms (Vinted's shared pool, eBay cross-site) do not attribute a
+  # listing to one country. They ship natively, so price them as a mid-EU move.
+  EU: 2
+  ES: 1
+  FR: 2
+  IT: 2
+  DE: 2
+  BE: 2
+  NL: 2
+  LU: 2
+  AT: 3
+  CZ: 3
+  SK: 3
+  SI: 3
+  PL: 3
+  HU: 3
+  HR: 3
+  DK: 3
+  IE: 3
+  SE: 4
+  FI: 4
+  EE: 4
+  LV: 4
+  LT: 4
+  RO: 4
+  BG: 4
+  GR: 4
+  CY: 5
+  MT: 5
+
+# Base cost by zone for a normal small parcel (<=2kg), and the marginal cost per
+# extra kg. Used by strategies that do not carry their own pricing.
+zone_costs:
+  0: {base: 4.0,  per_kg: 0.8,  days: [1, 3]}
+  1: {base: 9.0,  per_kg: 1.2,  days: [2, 5]}
+  2: {base: 14.0, per_kg: 1.8,  days: [3, 7]}
+  3: {base: 18.0, per_kg: 2.2,  days: [4, 9]}
+  4: {base: 26.0, per_kg: 3.0,  days: [5, 12]}
+  5: {base: 34.0, per_kg: 4.5,  days: [6, 15]}
+
+strategies:
+
+  - id: local_pickup
+    name: Buy locally, collect in person
+    kind: none
+    tier: 1
+    countries: [PT]
+    max_weight_kg: 999
+    bulky_ok: true
+    effort: 2
+    risk: 2
+    confidence: high
+    cost: {base: 0.0, per_kg: 0.0}
+    days: [0, 2]
+    summary: >-
+      Always check this first. A €40 fridge in Braga beats a €25 fridge in Bavaria
+      every single time once you price the movement.
+    steps:
+      - Search OLX.pt and CustoJusto.pt before anything else.
+      - Meet in a public place; pay on collection after testing the item.
+
+  - id: platform_native
+    name: Platform's own cross-border shipping
+    kind: platform
+    tier: 1
+    countries: [ALL]
+    requires_marketplace_native: true
+    max_weight_kg: 20
+    bulky_ok: false
+    effort: 1
+    risk: 1
+    confidence: high
+    cost: {base: 5.5, per_kg: 1.1, zone_multiplier: 0.8}
+    days: [3, 8]
+    summary: >-
+      Vinted, eBay International Shipping and OLX Envios handle the label, the
+      customs paperwork (none, inside the EU) and the dispute process themselves.
+      Buyer Protection means a non-delivery is a refund, not a fight.
+    steps:
+      - Filter results to listings whose platform ships to PT (the "ships to PT" toggle).
+      - Pay in-app; never move the conversation off-platform, or protection lapses.
+    providers:
+      - {name: "Vinted (CTT / DPD / Vinted Go)", url: "https://www.vinted.pt"}
+      - {name: "eBay International Shipping", url: "https://www.ebay.de/help/selling/posting-items/international-shipping"}
+      - {name: "OLX Envios (CTT Expresso)", url: "https://www.olx.pt"}
+
+  - id: prepaid_label
+    name: Send the seller a prepaid label
+    kind: broker
+    tier: 1
+    countries: [ALL]
+    max_weight_kg: 30
+    bulky_ok: false
+    effort: 3
+    risk: 3
+    confidence: high
+    cost: {base: 11.0, per_kg: 1.4}
+    days: [3, 9]
+    summary: >-
+      The single highest-leverage trick in this whole tool. You buy the
+      cross-border label yourself on a broker, email the seller a PDF or QR code,
+      and they drop the parcel at a shop 300m away. The seller pays nothing, does
+      no paperwork and takes no risk — which is why sellers who "don't ship
+      abroad" almost always say yes to this. Brokers resell carrier contracts at
+      30-60% below counter rates.
+    steps:
+      - Agree the sale and get the parcel's real dimensions and weight from the seller.
+      - Buy the label on Packlink / Sendcloud / Eurosender for the seller's address → yours.
+      - Email the PDF label + QR and the nearest drop-off point (link them the map).
+      - Pay only after you have the tracking number showing "accepted at drop-off".
+    providers:
+      - {name: "Packlink PRO", url: "https://pro.packlink.com"}
+      - {name: "Eurosender", url: "https://www.eurosender.com"}
+      - {name: "Sendcloud", url: "https://www.sendcloud.com"}
+      - {name: "Parcel ABC / ParcelMonkey", url: "https://www.parcelabc.com"}
+    caveats:
+      - Never send the label before the seller has confirmed the sale in writing.
+      - Insure above €100 of value; broker default cover is usually €25.
+
+  - id: inpost_locker
+    name: InPost locker-to-locker (Poland corridor)
+    kind: carrier
+    tier: 1
+    countries: [PL]
+    max_weight_kg: 25
+    bulky_ok: false
+    effort: 2
+    risk: 2
+    confidence: medium
+    cost: {base: 9.5, per_kg: 0.7}
+    days: [4, 8]
+    summary: >-
+      Poland is the EU's best-value market for used electronics, tools and photo
+      gear, and it is also the one with the slickest logistics: OLX Przesyłki
+      runs on InPost Paczkomaty, and InPost now operates lockers in Portugal.
+      Seller walks to a locker, you collect from a locker. No one waits in a queue.
+    steps:
+      - Buy via OLX Przesyłki where the listing offers it.
+      - Otherwise generate an InPost international label and send it to the seller.
+    providers:
+      - {name: "InPost International", url: "https://inpost.pt"}
+      - {name: "OLX Przesyłki", url: "https://www.olx.pl"}
+
+  - id: packeta_pickup
+    name: Packeta / Zásilkovna to a Portuguese pickup point
+    kind: carrier
+    tier: 2
+    countries: [CZ, SK, HU, RO, PL, AT, SI, HR, BG]
+    max_weight_kg: 10
+    bulky_ok: false
+    effort: 3
+    risk: 2
+    confidence: medium
+    cost: {base: 10.0, per_kg: 1.0}
+    days: [5, 10]
+    summary: >-
+      Central Europe's answer to InPost. Bazoš and Jófogás sellers know Packeta
+      the way German sellers know DHL, and Packeta delivers to Portuguese pickup
+      points — so the whole thing stays inside a workflow the seller already uses.
+    steps:
+      - Ask the seller to send "Packeta / Zásilkovna do zahraničí" to your PT pickup point.
+      - Or buy the label yourself on packeta.com and send it over.
+    providers:
+      - {name: "Packeta", url: "https://www.packeta.com"}
+
+  - id: border_pickup
+    name: Spanish border pickup (drive across)
+    kind: unconventional
+    tier: 1
+    countries: [ES]
+    max_weight_kg: 200
+    bulky_ok: true
+    effort: 4
+    risk: 2
+    confidence: high
+    cost: {base: 6.0, per_kg: 0.15, fixed_extra: 25.0}
+    days: [2, 6]
+    summary: >-
+      Portugal's only land border is with the EU's second-largest second-hand
+      market, and Spanish domestic shipping is both cheap and universally offered.
+      Have the seller ship *domestically* to a Correos office or locker in a
+      border town, then collect by car. For anything bulky — furniture, bikes,
+      appliances — this is dramatically cheaper than international freight, and
+      the "fixed_extra" below is roughly a tank of fuel and tolls.
+    steps:
+      - Ask the seller for plain Correos/SEUR domestic shipping (they will not object — it is normal for them).
+      - Ship to "Correos Oficina" list-of-post in Tui (Galicia, ~30min from Valença),
+        Badajoz (~15min from Elvas), Ayamonte (~10min from Vila Real de Santo António),
+        or Vigo/Salamanca for larger depots.
+      - Collect with passport; Correos holds parcels 15 days.
+    caveats:
+      - You need a Spanish address line the seller accepts — a Correos office address works.
+      - Batch several purchases into one trip or the fuel eats the saving.
+
+  - id: forwarder_es
+    name: Spanish forwarding address + consolidation
+    kind: forwarder
+    tier: 2
+    countries: [ES]
+    max_weight_kg: 30
+    bulky_ok: false
+    effort: 3
+    risk: 3
+    confidence: medium
+    cost: {base: 14.0, per_kg: 1.1, fixed_extra: 5.0}
+    days: [5, 12]
+    summary: >-
+      Same idea as border pickup without the drive: rent a Spanish address, have
+      several sellers ship domestically to it, then have the forwarder consolidate
+      everything into one box for Portugal. Consolidation is where the money is —
+      four separate €9 domestic parcels become one €18 international one.
+    steps:
+      - Open an account with a Spanish forwarder or a Correos "Apartado" box.
+      - Give sellers the Spanish address; wait for everything to land.
+      - Request consolidation, then one shipment to PT.
+    providers:
+      - {name: "Eurosender (address + forwarding)", url: "https://www.eurosender.com"}
+      - {name: "Correos Apartado Postal", url: "https://www.correos.es"}
+
+  - id: forwarder_de
+    name: German forwarding address (for DE-only sellers)
+    kind: forwarder
+    tier: 2
+    countries: [DE, AT]
+    max_weight_kg: 30
+    bulky_ok: false
+    effort: 3
+    risk: 3
+    confidence: high
+    cost: {base: 19.0, per_kg: 1.6, fixed_extra: 8.0}
+    days: [6, 14]
+    summary: >-
+      Germany has the deepest pool of used goods in Europe and the most rigid
+      "Versand nur innerhalb Deutschlands" culture. A German forwarding address
+      dissolves that entirely: the seller posts a normal domestic DHL parcel,
+      the forwarder inspects it (worth paying for on Kleinanzeigen buys) and
+      reships to Portugal.
+    steps:
+      - Register with a German forwarder and get your personal DE address.
+      - Buy as a domestic German buyer; pay the seller by SEPA transfer.
+      - Request photos/inspection on arrival before paying for the onward leg.
+    providers:
+      - {name: "myGermany", url: "https://mygermany.com"}
+      - {name: "Meest", url: "https://meest.de"}
+      - {name: "ShipTo / Forward2me DE", url: "https://www.forward2me.com"}
+    caveats:
+      - Forwarders charge storage after ~30 days; consolidate promptly.
+
+  - id: diaspora_van
+    name: Portuguese diaspora van (carrinha de emigrantes)
+    kind: unconventional
+    tier: 1
+    countries: [FR, LU, CH, DE, BE, NL, AD]
+    max_weight_kg: 500
+    bulky_ok: true
+    effort: 5
+    risk: 4
+    confidence: medium
+    cost: {base: 25.0, per_kg: 0.35}
+    days: [7, 21]
+    summary: >-
+      The genuinely unconventional one, and for heavy or bulky goods from France,
+      Luxembourg, Switzerland or Germany it beats every courier by a wide margin.
+      Dozens of small Portuguese transport firms run weekly vans along the
+      emigration corridors, door to door, priced by volume rather than by
+      chargeable weight. They will happily take a washing machine, a motorbike
+      fairing or six boxes of books. France is by far the densest corridor.
+    steps:
+      - Search "transporte de encomendas França Portugal" or "carrinhas para Portugal"
+        plus your region; most operators live on Facebook groups rather than websites.
+      - Agree pickup at the seller's address and delivery to yours; confirm the week's run.
+      - Pay part on pickup, remainder on delivery. Get the driver's phone number and plate.
+    caveats:
+      - Informal sector — no tracking, no insurance, schedules slip by days.
+      - Only use an operator with a real trading history and reviews you can read.
+      - Never for high-value electronics; ideal for bulky, low-value-density goods.
+
+  - id: coach_freight
+    name: Coach and bus parcel service
+    kind: unconventional
+    tier: 2
+    countries: [ES, FR]
+    max_weight_kg: 40
+    bulky_ok: true
+    effort: 4
+    risk: 3
+    confidence: medium
+    cost: {base: 18.0, per_kg: 0.5}
+    days: [2, 6]
+    summary: >-
+      Long-distance coach operators sell hold space as parcel freight, station to
+      station. Cheap, fast for the Iberian corridor, and takes odd-shaped items
+      couriers refuse. You collect from the bus station.
+    steps:
+      - Ask the seller to drop the parcel at their local coach station office.
+      - Collect at Lisboa Sete Rios, Porto Campanhã or your regional terminal.
+    providers:
+      - {name: "ALSA Paquetería", url: "https://www.alsa.es"}
+      - {name: "Rede Expressos", url: "https://www.rede-expressos.pt"}
+
+  - id: pallet_freight
+    name: Palletised road freight
+    kind: freight
+    tier: 3
+    countries: [ALL]
+    min_weight_kg: 30
+    max_weight_kg: 800
+    bulky_ok: true
+    effort: 4
+    risk: 3
+    confidence: high
+    cost: {base: 95.0, per_kg: 0.18}
+    days: [5, 14]
+    summary: >-
+      For furniture, machine tools, engines and anything a parcel carrier will
+      refuse. A half-pallet from Germany to Portugal is €120-200 — absurd for a
+      €60 chair, excellent for a €900 lathe or a set of Vitra chairs.
+    steps:
+      - Get exact dimensions and weight; have the seller palletise and wrap it.
+      - Book through a freight broker; specify a tail-lift if there is no loading dock.
+    providers:
+      - {name: "Palletways", url: "https://www.palletways.com"}
+      - {name: "Eurosender freight", url: "https://www.eurosender.com"}
+      - {name: "Raben / Dachser", url: "https://www.raben-group.com"}
+
+  - id: crowdshipping
+    name: Traveller crowdshipping
+    kind: unconventional
+    tier: 3
+    countries: [ALL]
+    max_weight_kg: 15
+    bulky_ok: false
+    effort: 5
+    risk: 4
+    confidence: low
+    cost: {base: 20.0, per_kg: 1.5}
+    days: [3, 30]
+    summary: >-
+      Platforms that match your parcel with a traveller already making the trip.
+      Realistically a niche play: matching is slow and depends entirely on someone
+      happening to fly your route. Worth a try for small, high-value, hard-to-ship
+      items — and for anything a courier would classify as dangerous goods
+      (lithium batteries, aerosols, some tools).
+    steps:
+      - Post the route and wait for a carrier match; verify their ID and reviews.
+      - Use the platform's escrow. Never pay a carrier directly.
+    providers:
+      - {name: "Worldcraze", url: "https://www.worldcraze.com"}
+      - {name: "PiggyBee", url: "https://www.piggybee.com"}
+      - {name: "Grabr", url: "https://grabr.io"}
+    caveats:
+      - You are trusting a stranger with the goods; keep value low.
+
+  - id: hand_carry
+    name: Hand-carry on a flight
+    kind: unconventional
+    tier: 2
+    countries: [ALL]
+    max_weight_kg: 23
+    bulky_ok: false
+    effort: 5
+    risk: 2
+    confidence: high
+    cost: {base: 45.0, per_kg: 0.0}
+    days: [1, 45]
+    summary: >-
+      A 23kg hold bag on a Ryanair or easyJet leg into Lisboa or Porto costs
+      €40-60 flat and has no per-kilo penalty at all. If you, a friend or a family
+      member is already flying that route, it is the cheapest way to move anything
+      dense and valuable — camera gear, lenses, tools, vinyl. Ship the item to
+      their local address first via cheap domestic post.
+    steps:
+      - Have the seller ship domestically to your contact in-country.
+      - Add a hold bag to their existing booking.
+      - Keep lithium batteries in the cabin, not the hold — airline rules, not a suggestion.
+
+  - id: proxy_buyer
+    name: In-country proxy buyer / inspection
+    kind: unconventional
+    # An overlay, not a route: it de-risks the purchase and then still needs one
+    # of the routes above for the actual movement. Ranked last for that reason.
+    overlay: true
+    tier: 3
+    countries: [ALL]
+    max_weight_kg: 30
+    bulky_ok: true
+    effort: 5
+    risk: 2
+    confidence: medium
+    cost: {base: 25.0, per_kg: 1.2, fixed_extra: 15.0}   # the fee/favour, on top of the chosen route
+    days: [5, 15]
+    summary: >-
+      For high-value buys on platforms with no buyer protection — Kleinanzeigen,
+      Bazoš, SS.lv — the real risk is not shipping, it is that the item is not
+      what the photos claim. Someone local who can meet the seller, test the item
+      and pay cash converts a stranger-danger transaction into a normal one, then
+      reships domestically. Costs a favour or a small fee; saves entire purchases.
+    steps:
+      - Find a local contact, an expat forum member, or a paid inspection service.
+      - They meet, test, pay cash, then ship domestically or via prepaid label.
+    caveats:
+      - Only worth the coordination above roughly €300 of item value.

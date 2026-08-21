@@ -1,0 +1,11 @@
+{"listings": [
+  {"itemId": "m2100", "title": "Nikon D750 body in nette staat", "vipUrl": "/v/audio-tv-en-foto/fotocamera-digitaal/m2100",
+   "priceInfo": {"priceCents": 64900, "priceType": "FIXED"},
+   "pictures": [{"largeUrl": "https://images.marktplaats.com/a/1.jpg"}],
+   "location": {"cityName": "Utrecht"}, "sellerInformation": {"sellerName": "fotojan"},
+   "date": "2026-08-14T09:12:00Z", "categorySpecificDescription": "Met 2 accu's en lader."},
+  {"itemId": "m2101", "title": "Nikon D750 met 24-120 lens", "vipUrl": "/v/audio-tv-en-foto/fotocamera-digitaal/m2101",
+   "priceInfo": {"priceCents": 99500}, "pictures": [], "location": {"cityName": "Amsterdam"},
+   "sellerInformation": {"sellerName": "studio_nl"}, "date": "2026-08-15T11:00:00Z"},
+  {"itemId": "m2102", "title": "", "vipUrl": "/v/x/m2102", "priceInfo": {"priceCents": 100}}
+]}
