@@ -22,33 +22,20 @@ The hosted page bridges the gap: the **Live results** tab takes the URL of a
 running backend (yours, local or self-hosted) and renders real merged results
 through it.
 
-## Publishing to GitHub Pages
+## Do not publish this repo to GitHub Pages
 
-`.github/workflows/pages.yml` does the whole build — including regenerating
-`site/data.json` from the YAML catalogue, so the published site can never drift
-from what the app searches. It needs no manual setup: the `actions/configure-pages`
-step turns Pages on using the workflow token's `pages: write` permission, and
-`actions/deploy-pages` publishes. Push to `main` and it goes live at:
+The Pages workflow has been removed, deliberately.
 
-```
-https://www.lumenandpixel.com/used-finds-eu/
-```
+This account's **user site** (`renaissanceape.github.io`) has the custom domain
+`www.lumenandpixel.com`. GitHub serves *every* project site belonging to an
+account under that account's custom domain — so enabling Pages on this repo
+publishes it at `https://www.lumenandpixel.com/used-finds-eu/`, on a live brand
+domain, whether or not that was the intent. It does not overwrite the root site
+and it touches no DNS, but it is still a public path on a domain this project
+has no business occupying.
 
-(This account has a custom Pages domain configured, so the site is served from
-`www.lumenandpixel.com` rather than the default `renaissanceape.github.io`.)
-
-**Plan note.** Pages from a *private* repository requires a paid GitHub plan
-(Pro/Team/Enterprise) — this account has one, which is why the repo can stay
-private. On a free plan the repo would have to be public instead. There are no
-credentials in the repo either way (`.gitignore` excludes the vault, and secrets
-live in `~/.local/state/ufeu/`), so publishing is safe from that angle.
-
-The `github-pages` environment only accepts deployments from the default branch,
-which is why the workflow triggers on `main` alone — pushing it from a feature
-branch produces a run that builds fine and then fails at the deploy step with
-*"Branch is not allowed to deploy to github-pages due to environment protection
-rules"*. Merge to `main`, or add the branch under *Settings → Environments →
-github-pages → Deployment branches*.
+If you ever do want it on Pages, put it in a **separate account or organisation**
+that has no custom domain, so it lands on `<account>.github.io/<repo>/` instead.
 
 ## Free domains, if `github.io` is not weird enough
 

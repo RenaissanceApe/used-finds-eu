@@ -13,11 +13,12 @@ out of Paris.
 
 ## Live site
 
-**<https://www.lumenandpixel.com/used-finds-eu/>** — deployed from `main` by
-[the Pages workflow](.github/workflows/pages.yml) on every push. The workflow
-enables Pages itself via `actions/configure-pages`, rebuilds `site/data.json`
-from the catalogue and runs the catalogue tests before publishing, so the live
-site can never drift from what the app searches.
+Not currently hosted anywhere. **Do not enable GitHub Pages on this repository.**
+This account's user site carries a custom domain, and GitHub serves every project
+site for the account under that same domain — so publishing this repo puts it on
+the account's public brand domain at `/used-finds-eu/`, which is not wanted. See
+[docs/05-hosting.md](docs/05-hosting.md) for hosting options that do not touch
+that domain.
 
 The hosted build is static, so it does what a browser can do without a server:
 the full marketplace catalogue, the complete shipping-to-Portugal calculator,
