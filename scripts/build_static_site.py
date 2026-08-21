@@ -190,7 +190,10 @@ def strip_document_wrapper(html: str) -> str:
 
 def main() -> int:
     data = build_data()
-    (SITE / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    # Generated payload, not a file anyone reads or diffs — ship it compact.
+    (SITE / "data.json").write_text(
+        json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
 
     standalone = inline_standalone(data)
     (SITE / "standalone.html").write_text(standalone, encoding="utf-8")
